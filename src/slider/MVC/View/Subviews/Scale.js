@@ -18,19 +18,14 @@ class Scale extends EventEmitter {
 
     this.scaleElements = [];
     if (this.view.options.hasScale) {
-      let number = this.view.options.min;
-      let i = 0;
       let sliderLength = this.view.options.vertical
         ? this.view.slider.element.getBoundingClientRect().height
         : this.view.slider.element.getBoundingClientRect().width;
       let sliderThickness = this.view.options.vertical
         ? this.view.slider.element.getBoundingClientRect().width
         : this.view.slider.element.getBoundingClientRect().height;
-      let stepLength =
-        sliderLength *
-        (this.view.options.step /
-          (this.view.options.max - this.view.options.min));
-      while (number <= this.view.options.max) {
+
+      for (let number of this.view.options.scaleValues) {
         let scaleElem = document.createElement("div");
         scaleElem.innerText = number;
         this.view.slider.element.append(scaleElem);
@@ -46,14 +41,20 @@ class Scale extends EventEmitter {
           ? scaleElem.getBoundingClientRect().height
           : scaleElem.getBoundingClientRect().width;
         if (this.view.options.vertical) {
-          scaleElem.style.bottom = stepLength * i - scaleSize / 2 + "px";
+          scaleElem.style.bottom =
+            (sliderLength * (number - this.view.options.min)) /
+              (this.view.options.max - this.view.options.min) -
+            scaleSize / 2 +
+            "px";
         } else {
-          scaleElem.style.left = stepLength * i - scaleSize / 2 + "px";
+          scaleElem.style.left =
+            (sliderLength * (number - this.view.options.min)) /
+              (this.view.options.max - this.view.options.min) -
+            scaleSize / 2 +
+            "px";
         }
-        number += this.view.options.step;
-        this.scaleElements.push(scaleElem);
 
-        i++;
+        this.scaleElements.push(scaleElem);
       }
       console.log(this.scaleElements);
       this.addEventListeners(this.scaleElements);
