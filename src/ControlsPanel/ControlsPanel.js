@@ -17,13 +17,9 @@ class ControlsPanel {
     this.element.className = "controlsWrapper";
     elem.append(this.element);
 
-    this.toggleIndicator = new Toggle(
-      this,
-      "indicators",
-      this.options.hasIndicator
-    );
-    this.toggleIndicator.element.onchange = (e) =>
-      this.slider.setHasIndicator(e.target.checked);
+    this.toggleTips = new Toggle(this, "tips", this.options.hasTips);
+    this.toggleTips.element.onchange = (e) =>
+      this.slider.setHasTips(e.target.checked);
 
     this.toggleRange = new Toggle(this, "range", this.options.range);
     this.toggleRange.element.onchange = (e) => {
@@ -32,7 +28,7 @@ class ControlsPanel {
 
     this.toggleScale = new Toggle(this, "scale", this.options.hasScale);
     this.toggleScale.element.onchange = (e) => {
-      this.slider.setScale(e.target.checked);
+      this.slider.setHasScale(e.target.checked);
     };
 
     this.toggleVertical = new Toggle(this, "vertical", this.options.vertical);

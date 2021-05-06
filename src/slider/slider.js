@@ -3,6 +3,6 @@ import { Model } from "./MVC/Model";
 import { Controller } from "./MVC/Controller";
 $.fn.ML_RangeSlider = function (options) {
   const model = new Model(options);
-  const view = new View(this, model, options);
+  const view = new View(this);
   return new Controller(model, view);
 };

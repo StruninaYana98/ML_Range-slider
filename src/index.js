@@ -1,16 +1,16 @@
 import "./slider/slider.css";
 import "./slider/slider";
 import "./ControlsPanel/ControlsPanel.css";
-import './index.css'
+import "./index.css";
 import { ControlsPanel } from "./ControlsPanel/ControlsPanel";
 
 new ControlsPanel(document.getElementById("panel1"), {
-  currLeft: 35,
-  currRight: 75,
+  firstValue: 35,
+  secondValue: 75,
   step: 1,
   range: true,
   hasScale: true,
-  hasIndicator: false,
+  hasTips: false,
   vertical: true,
   min: 0,
   max: 100,
@@ -18,14 +18,14 @@ new ControlsPanel(document.getElementById("panel1"), {
 });
 
 new ControlsPanel(document.getElementById("panel2"), {
-  currLeft: 3,
-  currRight: 5,
-  step: 1,
+  firstValue: 0,
+  secondValue: 3,
+  step: 3,
   range: true,
   hasScale: true,
-  hasIndicator: true,
+  hasTips: true,
   vertical: false,
   min: 0,
-  max: 20,
+  max: 12,
   sliderID: "slider2",
 });

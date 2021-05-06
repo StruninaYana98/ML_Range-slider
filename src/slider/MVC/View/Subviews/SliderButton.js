@@ -28,17 +28,17 @@ class SliderButton {
 
     if (this.view.options.vertical) {
       this.element.style.left = `${Number(widthDiff / 2)}px`;
-      if (this.side === "left") {
+      if (this.side === "first") {
         this.element.style.top = "auto";
         this.element.style.bottom = `-${Number(buttonHeight / 2)}px`;
-      } else if (this.side === "right") {
+      } else if (this.side === "second") {
         this.element.style.top = `-${Number(buttonHeight / 2)}px`;
       }
     } else {
       this.element.style.top = `${Number(heightDiff / 2)}px`;
-      if (this.side === "left") {
+      if (this.side === "first") {
         this.element.style.left = `-${Number(buttonWidth / 2)}px`;
-      } else if (this.side === "right") {
+      } else if (this.side === "second") {
         this.element.style.left = "auto";
         this.element.style.right = `-${Number(buttonWidth / 2)}px`;
       }

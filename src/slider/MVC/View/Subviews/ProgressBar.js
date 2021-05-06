@@ -16,18 +16,17 @@ class ProgressBar extends EventEmitter {
     this.render();
   }
   render() {
-    let firstButtonPosition_pros =
-      (this.view.options.currLeft - this.view.options.min) /
-      (this.view.options.max - this.view.options.min);
+    const { firstValue, secondValue, min, max, vertical } = this.view.options;
+    let firstButtonPosition_pros = (firstValue - min) / (max - min);
 
-    let sliderSize = this.view.options.vertical
+    let sliderSize = vertical
       ? this.view.slider.element.getBoundingClientRect().height
       : this.view.slider.element.getBoundingClientRect().width;
     let firstButtonPosition = (sliderSize * firstButtonPosition_pros).toFixed(
       2
     );
 
-    if (this.view.options.vertical) {
+    if (vertical) {
       this.element.style.bottom = firstButtonPosition + "px";
       this.element.style.left = "1px";
       this.element.style.right = "1px";
@@ -36,91 +35,40 @@ class ProgressBar extends EventEmitter {
       this.element.style.top = "1px";
       this.element.style.bottom = "1px";
     }
-    let secondButtonPosition_pros =
-      (this.view.options.max - this.view.options.currRight) /
-      (this.view.options.max - this.view.options.min);
+    let secondButtonPosition_pros = (max - secondValue) / (max - min);
     let secondButtonPosition = (sliderSize * secondButtonPosition_pros).toFixed(
       2
     );
-    if (this.view.options.vertical) {
+    if (vertical) {
       this.element.style.top = secondButtonPosition + "px";
     } else {
       this.element.style.right = secondButtonPosition + "px";
     }
   }
 
-  resizeProgressBar(event, side) {
-    let startPosition = this.view.options.vertical ? event.pageY : event.pageX;
-    console.log("startPosition  " + startPosition);
-    //  let rightcoord = this.progressBar.getBoundingClientRect().right;
+  resizeProgressBar(event, action) {
+    const { vertical, step, min, max } = this.view.options;
+    let startPosition = vertical ? event.pageY : event.pageX;
+    let sliderLength = vertical
+      ? this.view.slider.element.getBoundingClientRect().height
+      : this.view.slider.element.getBoundingClientRect().width;
+
+    let stepLength = (sliderLength * step) / (max - min);
+
     document.onmousemove = (event) => {
-      let movePosition = this.view.options.vertical ? event.pageY : event.pageX;
-      console.log("movePosition  " + movePosition);
-      // let barCoord = this.progressBar.getBoundingClientRect();
-
-      //    let width = barCoord.width;
-      let sliderLength = this.view.options.vertical
-        ? this.view.slider.element.getBoundingClientRect().height
-        : this.view.slider.element.getBoundingClientRect().width;
-
-      let stepLength =
-        (sliderLength * this.view.options.step) /
-        (this.view.options.max - this.view.options.min);
-
-      console.log(startPosition - stepLength);
-
+      let movePosition = vertical ? event.pageY : event.pageX;
       if (movePosition <= startPosition - stepLength / 2) {
-        if (side === "left") {
-          this.emit("buttonMoved", {
-            currLeft: this.view.options.vertical
-              ? Math.floor(
-                  Math.abs((startPosition - movePosition) / stepLength)
-                )
-              : -Math.floor(
-                  Math.abs((startPosition - movePosition) / stepLength)
-                ),
-          });
-        } else if (side === "right") {
-          this.emit("buttonMoved", {
-            currRight: this.view.options.vertical
-              ? Math.floor(
-                  Math.abs((startPosition - movePosition) / stepLength)
-                )
-              : -Math.floor(
-                  Math.abs((startPosition - movePosition) / stepLength)
-                ),
-          });
-        }
-        startPosition =
-          startPosition -
-          stepLength *
-            Math.floor(Math.abs((startPosition - movePosition) / stepLength));
+        const value =
+          Math.ceil(Math.abs((startPosition - movePosition) / stepLength)) *
+          step;
+        this.emit(action, vertical ? value : -value);
+        startPosition = startPosition - (stepLength * value) / step;
       } else if (movePosition >= startPosition + stepLength / 2) {
-        if (side === "left") {
-          this.emit("buttonMoved", {
-            currLeft: this.view.options.vertical
-              ? -Math.floor(
-                  Math.abs((startPosition - movePosition) / stepLength)
-                )
-              : Math.floor(
-                  Math.abs((startPosition - movePosition) / stepLength)
-                ),
-          });
-        } else if (side === "right") {
-          this.emit("buttonMoved", {
-            currRight: this.view.options.vertical
-              ? -Math.floor(
-                  Math.abs((startPosition - movePosition) / stepLength)
-                )
-              : Math.floor(
-                  Math.abs((startPosition - movePosition) / stepLength)
-                ),
-          });
-        }
-        startPosition =
-          startPosition +
-          stepLength *
-            Math.floor(Math.abs((startPosition - movePosition) / stepLength));
+        const value =
+          Math.ceil(Math.abs((startPosition - movePosition) / stepLength)) *
+          step;
+        this.emit(action, vertical ? -value : value);
+        startPosition = startPosition + (stepLength * value) / step;
       }
     };
     document.onmouseup = function () {

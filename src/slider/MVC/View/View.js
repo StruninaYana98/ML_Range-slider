@@ -3,50 +3,61 @@ import { ProgressBar } from "./Subviews/ProgressBar";
 import { SliderButton } from "./Subviews/SliderButton";
 import { EventEmitter } from "../EventEmmiter";
 import { Scale } from "./Subviews/Scale";
-import { Indicator } from "./Subviews/Indicator";
+import { Tips } from "./Subviews/Tips";
 class View extends EventEmitter {
-  constructor(rootObject, model, options) {
+  constructor(rootObject) {
     super();
+    this.rootObject = rootObject;
+  }
+  createSlider(options) {
+    console.log("createslider");
     this.options = options;
-    this.model = model;
     this.slider = new Slider(this);
-    rootObject.append(this.slider.element);
+    this.rootObject.append(this.slider.element);
     this.progressBar = new ProgressBar(this);
-    this.leftButton = new SliderButton(this, "left");
-    this.rightButton = new SliderButton(this, "right");
+    this.firstButton = new SliderButton(this, "first");
+    this.secondButton = new SliderButton(this, "second");
     this.scale = new Scale(this);
-    this.indicator = new Indicator(this);
-    this.leftButton.element.addEventListener("mousedown", (e) =>
-      this.startButtonMove(e, this.leftButton.side)
+    this.tips = new Tips(this);
+    this.firstButton.element.addEventListener("mousedown", (e) =>
+      this.startButtonMove(e, this.firstButton.side)
     );
-    this.rightButton.element.addEventListener("mousedown", (e) =>
-      this.startButtonMove(e, this.rightButton.side)
+    this.secondButton.element.addEventListener("mousedown", (e) =>
+      this.startButtonMove(e, this.secondButton.side)
     );
 
-    this.progressBar.on("buttonMoved", (options) => this.notifyModel(options));
+    this.progressBar.on("firstButtonMoved", (value) =>
+      this.notifyModel({ event: "firstButtonMoved", payload: value })
+    );
+    this.progressBar.on("secondButtonMoved", (value) =>
+      this.notifyModel({ event: "secondButtonMoved", payload: value })
+    );
     console.log(this.progressBar);
     this.scale.on("scaleClick", (number) => this.emit("scaleClick", number));
   }
-
   startButtonMove(e, side) {
-    this.progressBar.resizeProgressBar(e, side);
+    if (side === "first") {
+      this.progressBar.resizeProgressBar(e, "firstButtonMoved");
+    } else if (side === "second") {
+      this.progressBar.resizeProgressBar(e, "secondButtonMoved");
+    }
   }
 
-  notifyModel(options) {
-    this.emit("buttonMoved", options);
+  notifyModel({ event, payload }) {
+    this.emit(event, payload);
   }
   rerender(options) {
     this.options = options;
     this.slider.render();
 
     this.progressBar.render();
-    this.leftButton.element.hidden = !options.range;
-    this.leftButton.render();
+    this.firstButton.element.hidden = !options.range;
+    this.firstButton.render();
 
-    this.rightButton.render();
+    this.secondButton.render();
     this.scale.render();
 
-    this.indicator.render();
+    this.tips.render();
   }
 }
 

@@ -7,41 +7,39 @@ class Model extends EventEmitter {
   }
 
   loadFirstData() {
-    return this.options;
+    this.emit("loadFirstData", { ...this.options });
   }
-  buttonMoved(options) {
-    for (let key in options) {
-      if (
-        this.options[key] + options[key] * this.options.step >
-        this.options.max
-      ) {
-        // this.options[key] = this.options.max;
-      } else if (
-        this.options[key] + options[key] * this.options.step <
-        this.options.min
-      ) {
-        // this.options[key] = this.options.min;
-      } else {
-        this.options[key] =
-          this.options[key] + options[key] * this.options.step;
-      }
+  firstButtonMoved(value) {
+    if (
+      this.options.firstValue + value <= this.options.secondValue &&
+      this.options.firstValue + value >= this.options.min
+    ) {
+      this.options.firstValue = this.options.firstValue + value;
     }
-    console.log("options");
-    console.log({ ...this.options });
     this.emit("modelChanged", { ...this.options });
   }
+  secondButtonMoved(value) {
+    if (
+      this.options.secondValue + value >= this.options.firstValue &&
+      this.options.secondValue + value <= this.options.max
+    ) {
+      this.options.secondValue = this.options.secondValue + value;
+    }
+    this.emit("modelChanged", { ...this.options });
+  }
+
   scaleClick(number) {
     if (this.options.range) {
       if (
-        Math.abs(number - this.options.currLeft) <
-        Math.abs(number - this.options.currRight)
+        Math.abs(number - this.options.firstValue) <
+        Math.abs(number - this.options.secondValue)
       ) {
-        this.options.currLeft = Number(number);
+        this.options.firstValue = Number(number);
       } else {
-        this.options.currRight = Number(number);
+        this.options.secondValue = Number(number);
       }
     } else {
-      this.options.currRight = Number(number);
+      this.options.secondValue = Number(number);
     }
     this.emit("modelChanged", { ...this.options });
   }
@@ -49,18 +47,18 @@ class Model extends EventEmitter {
     this.options.min = Number(min);
     this.emit("modelChanged", { ...this.options });
   }
-  setHasIndicator(hasIndicator) {
-    this.options.hasIndicator = hasIndicator;
+  setHasTips(hasTips) {
+    this.options.hasTips = hasTips;
     this.emit("modelChanged", { ...this.options });
   }
   setRange(range) {
     this.options.range = range;
     if (!range) {
-      this.options.currLeft = this.options.min;
+      this.options.firstValue = this.options.min;
     }
     this.emit("modelChanged", { ...this.options });
   }
-  setScale(hasScale) {
+  setHasScale(hasScale) {
     this.options.hasScale = hasScale;
     this.emit("modelChanged", { ...this.options });
   }
