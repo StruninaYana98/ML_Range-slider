@@ -1,0 +1,20 @@
+body{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+.panel{
+    display: flex;
+    color:rgb(156, 156, 156);
+    font-size:12px;
+    line-height: 12px;
+    font-family: system-ui;
+    font-weight: 500;
+   
+   
+   
+    padding:30px;
+    margin:50px;
+    width:fit-content;
+}
