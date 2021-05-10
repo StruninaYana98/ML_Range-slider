@@ -12,7 +12,7 @@ class Controller extends EventEmitter {
     );
     this.view.on(VIEW_CHANGED, (event) => this.model.eventHandler(event));
     this.model.on(MODEL_CHANGED, (options) => this.view.rerender(options));
-    this.model.loadFirstData();
+    this.model.firstLoadOptions();
   }
   getSliderOptions() {
     return this.model.options;

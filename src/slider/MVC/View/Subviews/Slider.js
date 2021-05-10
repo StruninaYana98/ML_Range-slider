@@ -1,5 +1,8 @@
-class Slider {
+import { Subview } from "./Subview";
+
+class Slider extends Subview {
   constructor(view) {
+    super();
     this.view = view;
     this.createSlider();
   }
@@ -7,15 +10,14 @@ class Slider {
   createSlider() {
     let slider = document.createElement(`div`);
     slider.className = "slider";
-
     this.element = slider;
-  
     this.render();
   }
+
   render() {
-    this.view.options;
+    const { vertical } = this.view.options;
     this.element.style.position = "relative";
-    if (this.view.options.vertical) {
+    if (vertical) {
       this.element.style.width = "5px";
       this.element.style.height = "100%";
     } else {

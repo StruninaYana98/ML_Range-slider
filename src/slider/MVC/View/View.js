@@ -15,21 +15,20 @@ class View extends EventEmitter {
     super();
     this.rootObject = rootObject;
   }
+
   createSlider(options) {
     this.options = options;
     this.slider = new Slider(this);
     this.rootObject.append(this.slider.element);
     this.progressBar = new ProgressBar(this);
     this.firstButton = new SliderButton(this, "first");
+    this.firstButton.element.hidden = !options.range;
     this.secondButton = new SliderButton(this, "second");
     this.scale = new Scale(this);
     this.tips = new Tips(this);
     this.addEventListeners();
   }
 
-  notifySubscribers(event) {
-    this.emit(VIEW_CHANGED, event);
-  }
   rerender(options) {
     this.options = options;
     this.slider.render();
@@ -42,11 +41,11 @@ class View extends EventEmitter {
   }
 
   addEventListeners() {
-    this.firstButton.element.addEventListener("mousedown", (e) =>
-      this.startButtonMove(e, this.firstButton.side)
+    this.firstButton.element.addEventListener("mousedown", () =>
+      this.progressBar.resizeProgressBar(FIRST_VALUE_CHANGED)
     );
-    this.secondButton.element.addEventListener("mousedown", (e) =>
-      this.startButtonMove(e, this.secondButton.side)
+    this.secondButton.element.addEventListener("mousedown", () =>
+      this.progressBar.resizeProgressBar(SECOND_VALUE_CHANGED)
     );
     this.progressBar.on(FIRST_VALUE_CHANGED, (value) =>
       this.notifySubscribers({ action: FIRST_VALUE_CHANGED, payload: value })
@@ -59,12 +58,8 @@ class View extends EventEmitter {
     );
   }
 
-  startButtonMove(e, side) {
-    if (side === "first") {
-      this.progressBar.resizeProgressBar(e, FIRST_VALUE_CHANGED);
-    } else if (side === "second") {
-      this.progressBar.resizeProgressBar(e, SECOND_VALUE_CHANGED);
-    }
+  notifySubscribers(event) {
+    this.emit(VIEW_CHANGED, event);
   }
 }
 

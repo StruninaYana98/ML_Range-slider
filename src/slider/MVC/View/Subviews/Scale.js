@@ -1,7 +1,7 @@
 import { SCALE_CLICK } from "../../actionTypes";
-import { EventEmitter } from "../../EventEmmiter";
+import { Subview } from "./Subview";
 
-class Scale extends EventEmitter {
+class Scale extends Subview {
   constructor(view) {
     super();
     this.view = view;
@@ -12,51 +12,44 @@ class Scale extends EventEmitter {
     this.render();
   }
   render() {
+    const { hasScale, vertical, scaleValues, min, max } = this.view.options;
     for (let item of this.scaleElements) {
       this.view.slider.element.removeChild(item);
     }
-
     this.scaleElements = [];
-    if (this.view.options.hasScale) {
-      let sliderLength = this.view.options.vertical
-        ? this.view.slider.element.getBoundingClientRect().height
-        : this.view.slider.element.getBoundingClientRect().width;
-      let sliderThickness = this.view.options.vertical
-        ? this.view.slider.element.getBoundingClientRect().width
-        : this.view.slider.element.getBoundingClientRect().height;
-
-      for (let number of this.view.options.scaleValues) {
+    if (hasScale) {
+      let sliderWidth = this.getElementWidth(
+        this.view.slider.element,
+        vertical
+      );
+      let sliderHeight = this.getElementHeight(
+        this.view.slider.element,
+        vertical
+      );
+      for (let number of scaleValues) {
         let scaleElem = document.createElement("div");
         scaleElem.innerText = number;
         this.view.slider.element.append(scaleElem);
         scaleElem.style.position = "absolute";
-        if (this.view.options.vertical) {
-          scaleElem.style.left = 20 + sliderThickness + "px";
+        let scaleElemSliderGap = `${20 + sliderHeight}px`;
+        if (vertical) {
+          scaleElem.style.left = scaleElemSliderGap;
         } else {
-          scaleElem.style.top = 20 + sliderThickness + "px";
+          scaleElem.style.top = scaleElemSliderGap;
         }
         scaleElem.style.cursor = "pointer";
 
-        let scaleSize = this.view.options.vertical
-          ? scaleElem.getBoundingClientRect().height
-          : scaleElem.getBoundingClientRect().width;
-        if (this.view.options.vertical) {
-          scaleElem.style.bottom =
-            (sliderLength * (number - this.view.options.min)) /
-              (this.view.options.max - this.view.options.min) -
-            scaleSize / 2 +
-            "px";
+        let scaleElemWidth = this.getElementWidth(scaleElem, vertical);
+        let scaleElemPosition = `${(scaleElem.style.bottom =
+          (sliderWidth * (number - min)) / (max - min) -
+          scaleElemWidth / 2)}px`;
+        if (vertical) {
+          scaleElem.style.bottom = scaleElemPosition;
         } else {
-          scaleElem.style.left =
-            (sliderLength * (number - this.view.options.min)) /
-              (this.view.options.max - this.view.options.min) -
-            scaleSize / 2 +
-            "px";
+          scaleElem.style.left = scaleElemPosition;
         }
-
         this.scaleElements.push(scaleElem);
       }
-
       this.addEventListeners(this.scaleElements);
     }
   }

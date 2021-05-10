@@ -5,15 +5,6 @@ import "./index.css";
 import { ControlsPanel } from "./ControlsPanel/ControlsPanel";
 
 new ControlsPanel(document.getElementById("panel1"), {
-  firstValue: 35,
-  secondValue: 75,
-  step: 1,
-  range: true,
-  hasScale: true,
-  hasTips: false,
-  vertical: true,
-  min: 0,
-  max: 100,
   sliderID: "slider1",
 });
 

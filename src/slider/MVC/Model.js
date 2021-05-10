@@ -24,6 +24,7 @@ const defaultOptions = {
   vertical: true,
   min: 0,
   max: 10,
+  maxScaleNumbersCount: 10,
 };
 class Model extends EventEmitter {
   constructor(options) {
@@ -35,7 +36,20 @@ class Model extends EventEmitter {
       return defaultOptions;
     }
     let validOptions = { ...options };
+    validOptions.range = !!validOptions.range;
+    validOptions.hasScale = !!validOptions.hasScale;
+    validOptions.hasTips = !!validOptions.hasTips;
+    validOptions.vertical = !!validOptions.vertical;
     if (
+      typeof validOptions.min !== "number" &&
+      typeof validOptions.max !== "number"
+    ) {
+      validOptions.min = 0;
+      validOptions.max =
+        typeof validOptions.step === "number"
+          ? validOptions.min + validOptions.step * 10
+          : validOptions.min + 10;
+    } else if (
       typeof validOptions.min !== "number" &&
       typeof validOptions.max === "number"
     ) {
@@ -124,7 +138,7 @@ class Model extends EventEmitter {
     return array[minIndex];
   }
 
-  loadFirstData() {
+  firstLoadOptions() {
     this.options = this.validateOptions(this.options);
     this.emit(FIRST_LOAD_OPTIONS, { ...this.options });
   }
