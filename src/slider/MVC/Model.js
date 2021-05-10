@@ -6,7 +6,9 @@ import {
   MAX_SCALE_NUMBERS_COUNT_CHANGED,
   MAX_VALUE_CHANGED,
   MIN_VALUE_CHANGED,
+  MODEL_CHANGED,
   RANGE_CHANGED,
+  SCALE_CLICK,
   SECOND_VALUE_CHANGED,
   STEP_CHANGED,
   VERTICAL_CHANGED,
@@ -29,11 +31,10 @@ class Model extends EventEmitter {
     this.options = options;
   }
   validateOptions(options) {
-    if (!options) {
+    if (typeof options !== "object") {
       return defaultOptions;
     }
     let validOptions = { ...options };
-
     if (
       typeof validOptions.min !== "number" &&
       typeof validOptions.max === "number"
@@ -118,126 +119,132 @@ class Model extends EventEmitter {
     for (let item of array) {
       diffArray.push(Math.abs(item - value));
     }
-    console.log(diffArray);
     let min = Math.min(...diffArray);
-    console.log(min);
     let minIndex = diffArray.findIndex((item) => item === min);
-    console.log(array[minIndex]);
     return array[minIndex];
   }
+
   loadFirstData() {
     this.options = this.validateOptions(this.options);
-    this.emit("loadFirstData", { ...this.options });
-  }
-  firstButtonMoved(value) {
-    this.options.firstValue = value;
-
-    this.options = this.validateOptions(this.options);
-    this.emit("modelChanged", { ...this.options });
-  }
-  secondButtonMoved(value) {
-    this.options.secondValue = value;
-
-    this.options = this.validateOptions(this.options);
-    this.emit("modelChanged", { ...this.options });
+    this.emit(FIRST_LOAD_OPTIONS, { ...this.options });
   }
 
-  scaleClick(number) {
-    if (this.options.range) {
-      if (
-        Math.abs(Number(number) - this.options.firstValue) <
-        Math.abs(Number(number) - this.options.secondValue)
-      ) {
-        this.options.firstValue = Number(number);
-      } else {
-        this.options.secondValue = Number(number);
-      }
-    } else {
-      this.options.secondValue = Number(number);
-    }
-    this.options = this.validateOptions(this.options);
-    this.emit("modelChanged", { ...this.options });
-  }
   setMinValue(min) {
-    this.options.min = Number(min);
-    this.options = this.validateOptions(this.options);
-    this.emit("modelChanged", { ...this.options });
+    this.eventHandler({ action: MIN_VALUE_CHANGED, payload: min });
+  }
+  getMinValue() {
+    return this.options.min;
   }
   setMaxValue(max) {
-    this.options.max = Number(max);
-    this.options = this.validateOptions(this.options);
-    this.emit("modelChanged", { ...this.options });
+    this.eventHandler({ action: MAX_VALUE_CHANGED, payload: max });
+  }
+  getMaxValue() {
+    return this.options.max;
   }
   setFirstValue(value) {
-    this.options.firstValue = Number(value);
-    this.options = this.validateOptions(this.options);
-    this.emit("modelChanged", { ...this.options });
+    this.eventHandler({ action: FIRST_VALUE_CHANGED, payload: value });
+  }
+  getFirstValue() {
+    return this.options.firstValue;
   }
   setSecondValue(value) {
-    this.options.secondValue = Number(value);
-    this.options = this.validateOptions(this.options);
-    this.emit("modelChanged", { ...this.options });
+    this.eventHandler({ action: SECOND_VALUE_CHANGED, payload: value });
+  }
+  getSecondValue() {
+    return this.options.secondValue;
   }
   setHasTips(hasTips) {
-    this.options.hasTips = hasTips;
-    this.options = this.validateOptions(this.options);
-    this.emit("modelChanged", { ...this.options });
+    this.eventHandler({ action: HAS_TIPS_CHANGED, payload: hasTips });
+  }
+  getHasTips() {
+    return this.options.hasTips;
   }
   setRange(range) {
-    this.options.range = range;
-    if (!range) {
-      this.options.firstValue = this.options.min;
-    }
-    this.options = this.validateOptions(this.options);
-    this.emit("modelChanged", { ...this.options });
+    this.eventHandler({ action: RANGE_CHANGED, payload: range });
+  }
+  getRange() {
+    return this.options.range;
   }
   setHasScale(hasScale) {
-    this.options.hasScale = hasScale;
-    this.options = this.validateOptions(this.options);
-    this.emit("modelChanged", { ...this.options });
+    this.eventHandler({ action: HAS_SCALE_CHANGED, payload: hasScale });
+  }
+  getHasScale() {
+    return this.options.hasScale;
   }
   setVertical(vertical) {
-    this.options.vertical = vertical;
-    this.options = this.validateOptions(this.options);
-    this.emit("modelChanged", { ...this.options });
+    this.eventHandler({ action: VERTICAL_CHANGED, payload: vertical });
+  }
+  getVertical() {
+    return this.options.vertical;
   }
   setStep(step) {
-    this.options.step = Number(step);
-    this.options = this.validateOptions(this.options);
-    this.emit("modelChanged", { ...this.options });
+    this.eventHandler({ action: STEP_CHANGED, payload: step });
+  }
+  getStep() {
+    return this.options.step;
   }
   setMaxScaleNumbersCount(count) {
-    this.options.maxScaleNumbersCount = Number(count);
-    this.options = this.validateOptions(this.options);
-    this.emit("modelChanged", { ...this.options });
+    this.eventHandler({
+      action: MAX_SCALE_NUMBERS_COUNT_CHANGED,
+      payload: count,
+    });
   }
-
+  getMaxScaleNumbersCount() {
+    return this.options.maxScaleNumbersCount;
+  }
+  eventHandler(event) {
+    this.reducer(event.action, event.payload);
+  }
   reducer(action, value) {
+    let options = { ...this.options };
     switch (action) {
       case FIRST_VALUE_CHANGED:
-        this.options.firstValue = Number(value);
+        options.firstValue = Number(value);
+        break;
       case SECOND_VALUE_CHANGED:
-        this.options.secondValue = Number(value);
+        options.secondValue = Number(value);
+        break;
       case MIN_VALUE_CHANGED:
-        this.options.min = Number(value);
+        options.min = Number(value);
+        break;
       case MAX_VALUE_CHANGED:
-        this.options.max = Number(value);
+        options.max = Number(value);
+        break;
+      case SCALE_CLICK:
+        if (options.range) {
+          if (
+            Math.abs(Number(value) - options.firstValue) <
+            Math.abs(Number(value) - options.secondValue)
+          ) {
+            options.firstValue = Number(value);
+          } else {
+            options.secondValue = Number(value);
+          }
+        } else {
+          options.secondValue = Number(value);
+        }
+        break;
       case HAS_TIPS_CHANGED:
-        this.options.hasTips = value;
+        options.hasTips = value;
+        break;
       case RANGE_CHANGED:
-        this.options.range = range;
+        options.range = value;
+        break;
       case HAS_SCALE_CHANGED:
-        this.options.hasScale = hasScale;
+        options.hasScale = value;
+        break;
       case VERTICAL_CHANGED:
-        this.options.vertical = vertical;
+        options.vertical = value;
+        break;
       case STEP_CHANGED:
-        this.options.step = Number(step);
+        options.step = Number(value);
+        break;
       case MAX_SCALE_NUMBERS_COUNT_CHANGED:
-        this.options.maxScaleNumbersCount = Number(count);
-      default:
-        this.options = this.validateOptions(this.options);
-        this.emit("modelChanged", { ...this.options });
+        options.maxScaleNumbersCount = Number(value);
+        break;
     }
+    this.options = this.validateOptions(options);
+    this.emit(MODEL_CHANGED, { ...this.options });
   }
 }
 export { Model };

@@ -1,3 +1,4 @@
+import { FIRST_LOAD_OPTIONS, MODEL_CHANGED, VIEW_CHANGED } from "./actionTypes";
 import { EventEmitter } from "./EventEmmiter";
 
 class Controller extends EventEmitter {
@@ -6,15 +7,11 @@ class Controller extends EventEmitter {
     this.model = model;
     this.view = view;
 
-    this.model.on("loadFirstData", (options) =>
+    this.model.on(FIRST_LOAD_OPTIONS, (options) =>
       this.view.createSlider(options)
     );
-    this.view.on("firstButtonMoved", (pos) => this.model.firstButtonMoved(pos));
-    this.view.on("secondButtonMoved", (pos) =>
-      this.model.secondButtonMoved(pos)
-    );
-    this.model.on("modelChanged", (options) => this.view.rerender(options));
-    this.view.on("scaleClick", (number) => this.model.scaleClick(number));
+    this.view.on(VIEW_CHANGED, (event) => this.model.eventHandler(event));
+    this.model.on(MODEL_CHANGED, (options) => this.view.rerender(options));
     this.model.loadFirstData();
   }
   getSliderOptions() {
@@ -51,7 +48,7 @@ class Controller extends EventEmitter {
     this.model.setMaxScaleNumbersCount(count);
   }
   addEventListener(eventHandler) {
-    this.model.on("modelChanged", (options) => eventHandler(options));
+    this.model.on(MODEL_CHANGED, (options) => eventHandler(options));
   }
 }
 export { Controller };

@@ -1,3 +1,4 @@
+import { SCALE_CLICK } from "../../actionTypes";
 import { EventEmitter } from "../../EventEmmiter";
 
 class Scale extends EventEmitter {
@@ -65,7 +66,7 @@ class Scale extends EventEmitter {
     }
   }
   scaleClick(e) {
-    this.emit("scaleClick", e.target.innerText);
+    this.emit(SCALE_CLICK, e.target.innerText);
   }
 }
 export { Scale };
