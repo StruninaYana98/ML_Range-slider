@@ -1,3 +1,16 @@
+import {
+  FIRST_LOAD_OPTIONS,
+  FIRST_VALUE_CHANGED,
+  HAS_SCALE_CHANGED,
+  HAS_TIPS_CHANGED,
+  MAX_SCALE_NUMBERS_COUNT_CHANGED,
+  MAX_VALUE_CHANGED,
+  MIN_VALUE_CHANGED,
+  RANGE_CHANGED,
+  SECOND_VALUE_CHANGED,
+  STEP_CHANGED,
+  VERTICAL_CHANGED,
+} from "./actionTypes";
 import { EventEmitter } from "./EventEmmiter";
 const defaultOptions = {
   firstValue: 0,
@@ -93,6 +106,9 @@ class Model extends EventEmitter {
       validOptions.firstValue = validOptions.secondValue;
       validOptions.secondValue = val;
     }
+    if (!validOptions.range) {
+      validOptions.firstValue = validOptions.min;
+    }
     console.log(validOptions);
     return validOptions;
   }
@@ -114,13 +130,13 @@ class Model extends EventEmitter {
     this.emit("loadFirstData", { ...this.options });
   }
   firstButtonMoved(value) {
-    this.options.firstValue = this.options.firstValue + value;
+    this.options.firstValue = value;
 
     this.options = this.validateOptions(this.options);
     this.emit("modelChanged", { ...this.options });
   }
   secondButtonMoved(value) {
-    this.options.secondValue = this.options.secondValue + value;
+    this.options.secondValue = value;
 
     this.options = this.validateOptions(this.options);
     this.emit("modelChanged", { ...this.options });
@@ -129,8 +145,8 @@ class Model extends EventEmitter {
   scaleClick(number) {
     if (this.options.range) {
       if (
-        Math.abs(number - this.options.firstValue) <
-        Math.abs(number - this.options.secondValue)
+        Math.abs(Number(number) - this.options.firstValue) <
+        Math.abs(Number(number) - this.options.secondValue)
       ) {
         this.options.firstValue = Number(number);
       } else {
@@ -194,6 +210,34 @@ class Model extends EventEmitter {
     this.options.maxScaleNumbersCount = Number(count);
     this.options = this.validateOptions(this.options);
     this.emit("modelChanged", { ...this.options });
+  }
+
+  reducer(action, value) {
+    switch (action) {
+      case FIRST_VALUE_CHANGED:
+        this.options.firstValue = Number(value);
+      case SECOND_VALUE_CHANGED:
+        this.options.secondValue = Number(value);
+      case MIN_VALUE_CHANGED:
+        this.options.min = Number(value);
+      case MAX_VALUE_CHANGED:
+        this.options.max = Number(value);
+      case HAS_TIPS_CHANGED:
+        this.options.hasTips = value;
+      case RANGE_CHANGED:
+        this.options.range = range;
+      case HAS_SCALE_CHANGED:
+        this.options.hasScale = hasScale;
+      case VERTICAL_CHANGED:
+        this.options.vertical = vertical;
+      case STEP_CHANGED:
+        this.options.step = Number(step);
+      case MAX_SCALE_NUMBERS_COUNT_CHANGED:
+        this.options.maxScaleNumbersCount = Number(count);
+      default:
+        this.options = this.validateOptions(this.options);
+        this.emit("modelChanged", { ...this.options });
+    }
   }
 }
 export { Model };

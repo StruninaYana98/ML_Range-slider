@@ -47,28 +47,45 @@ class ProgressBar extends EventEmitter {
   }
 
   resizeProgressBar(event, action) {
-    const { vertical, step, min, max } = this.view.options;
-    let startPosition = vertical ? event.pageY : event.pageX;
+    const { vertical, min, max } = this.view.options;
+
     let sliderLength = vertical
       ? this.view.slider.element.getBoundingClientRect().height
       : this.view.slider.element.getBoundingClientRect().width;
 
-    let stepLength = (sliderLength * step) / (max - min);
+    let sliderStartPosition = vertical
+      ? this.view.slider.element.getBoundingClientRect().bottom +
+        window.pageYOffset
+      : this.view.slider.element.getBoundingClientRect().left +
+        window.pageXOffset;
+    let sliderEndPosition = vertical
+      ? this.view.slider.element.getBoundingClientRect().top +
+        window.pageYOffset
+      : this.view.slider.element.getBoundingClientRect().right +
+        window.pageXOffset;
 
     document.onmousemove = (event) => {
       let movePosition = vertical ? event.pageY : event.pageX;
-      if (movePosition <= startPosition - stepLength / 2) {
+      let isInSlider = false;
+      if (
+        vertical &&
+        movePosition <= sliderStartPosition &&
+        movePosition >= sliderEndPosition
+      ) {
+        isInSlider = true;
+      } else if (
+        !vertical &&
+        movePosition >= sliderStartPosition &&
+        movePosition <= sliderEndPosition
+      ) {
+        isInSlider = true;
+      }
+      if (isInSlider) {
         const value =
-          Math.ceil(Math.abs((startPosition - movePosition) / stepLength)) *
-          step;
-        this.emit(action, vertical ? value : -value);
-        startPosition = startPosition - (stepLength * value) / step;
-      } else if (movePosition >= startPosition + stepLength / 2) {
-        const value =
-          Math.ceil(Math.abs((startPosition - movePosition) / stepLength)) *
-          step;
-        this.emit(action, vertical ? -value : value);
-        startPosition = startPosition + (stepLength * value) / step;
+          min +
+          Math.abs((movePosition - sliderStartPosition) / sliderLength) *
+            (max - min);
+        this.emit(action, value);
       }
     };
     document.onmouseup = function () {

@@ -11,7 +11,6 @@ class Scale extends EventEmitter {
     this.render();
   }
   render() {
-    console.log(this.view.options.hasScale);
     for (let item of this.scaleElements) {
       this.view.slider.element.removeChild(item);
     }
@@ -56,7 +55,7 @@ class Scale extends EventEmitter {
 
         this.scaleElements.push(scaleElem);
       }
-      console.log(this.scaleElements);
+
       this.addEventListeners(this.scaleElements);
     }
   }

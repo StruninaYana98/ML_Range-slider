@@ -9,7 +9,7 @@ class Slider {
     slider.className = "slider";
 
     this.element = slider;
-    console.log(this.element);
+  
     this.render();
   }
   render() {

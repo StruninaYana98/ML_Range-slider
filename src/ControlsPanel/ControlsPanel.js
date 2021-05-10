@@ -67,10 +67,7 @@ class ControlsPanel {
     this.step.element.onchange = (e) => {
       this.slider.setStep(e.target.value);
     };
-    console.log(
-      "this.options.maxScaleNumbersCount    " +
-        this.options.maxScaleNumbersCount
-    );
+  
     this.maxScaleNumbersCount = new NumericInput(
       this,
       "max\nscale\nnumbers\ncount",

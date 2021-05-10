@@ -10,7 +10,6 @@ class View extends EventEmitter {
     this.rootObject = rootObject;
   }
   createSlider(options) {
-    console.log("createslider");
     this.options = options;
     this.slider = new Slider(this);
     this.rootObject.append(this.slider.element);
@@ -32,7 +31,7 @@ class View extends EventEmitter {
     this.progressBar.on("secondButtonMoved", (value) =>
       this.notifyModel({ event: "secondButtonMoved", payload: value })
     );
-    console.log(this.progressBar);
+
     this.scale.on("scaleClick", (number) => this.emit("scaleClick", number));
   }
   startButtonMove(e, side) {
