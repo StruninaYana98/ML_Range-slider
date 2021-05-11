@@ -1,5 +1,8 @@
-class Tips {
+import { Subview } from "./Subview";
+
+class Tips extends Subview {
   constructor(view) {
+    super();
     this.view = view;
     this.createTips();
   }
@@ -12,58 +15,49 @@ class Tips {
     secondTip.style.position = "absolute";
     this.view.firstButton.element.append(firstTip);
     this.view.secondButton.element.append(secondTip);
-
     this.firstTip = firstTip;
     this.secondTip = secondTip;
-
     this.render();
   }
 
   render() {
     const { hasTips, firstValue, secondValue, vertical } = this.view.options;
-
     this.firstTip.hidden = !hasTips;
     this.secondTip.hidden = !hasTips;
-
     this.firstTip.innerText = firstValue;
     this.secondTip.innerText = secondValue;
 
-    let firstTipSize1 = vertical
-      ? this.firstTip.getBoundingClientRect().width
-      : this.firstTip.getBoundingClientRect().height;
-    let secondTipSize1 = vertical
-      ? this.secondTip.getBoundingClientRect().width
-      : this.secondTip.getBoundingClientRect().height;
+    const firstTipHeight = this.getElementHeight(this.firstTip, vertical);
+    const secondTipHeight = this.getElementHeight(this.secondTip, vertical);
     if (vertical) {
-      this.firstTip.style.left = "-" + (firstTipSize1 + 5) + "px";
-      this.secondTip.style.left = "-" + (secondTipSize1 + 5) + "px";
+      this.firstTip.style.left = `-${firstTipHeight + 5}px`;
+      this.secondTip.style.left = `-${secondTipHeight + 5}px`;
     } else {
-      this.firstTip.style.top = "-" + (firstTipSize1 + 5) + "px";
-      this.secondTip.style.top = "-" + (secondTipSize1 + 5) + "px";
+      this.firstTip.style.top = `-${firstTipHeight + 5}px`;
+      this.secondTip.style.top = `-${secondTipHeight + 5}px`;
     }
 
-    let firstButtonSize = vertical
-      ? this.view.firstButton.element.getBoundingClientRect().height
-      : this.view.firstButton.element.getBoundingClientRect().width;
-    let secondButtonSize = vertical
-      ? this.view.secondButton.element.getBoundingClientRect().height
-      : this.view.secondButton.element.getBoundingClientRect().width;
+    const firstButtonWidth = this.getElementWidth(
+      this.view.firstButton.element,
+      vertical
+    );
+    const secondButtonWidth = this.getElementWidth(
+      this.view.secondButton.element,
+      vertical
+    );
 
-    let firstTipSize = vertical
-      ? this.firstTip.getBoundingClientRect().height
-      : this.firstTip.getBoundingClientRect().width;
-    let secondTipSize = vertical
-      ? this.secondTip.getBoundingClientRect().height
-      : this.secondTip.getBoundingClientRect().width;
+    const firstTipWidth = this.getElementWidth(this.firstTip, vertical);
+    const secondTipWidth = this.getElementWidth(this.secondTip, vertical);
+
+    const firstTipPosition = firstButtonWidth / 2 - firstTipWidth / 2 + "px";
+    const secondTipPosition = secondButtonWidth / 2 - secondTipWidth / 2 + "px";
 
     if (vertical) {
-      this.firstTip.style.top = firstButtonSize / 2 - firstTipSize / 2 + "px";
-      this.secondTip.style.top =
-        secondButtonSize / 2 - secondTipSize / 2 + "px";
+      this.firstTip.style.top = firstTipPosition;
+      this.secondTip.style.top = secondTipPosition;
     } else {
-      this.firstTip.style.left = firstButtonSize / 2 - firstTipSize / 2 + "px";
-      this.secondTip.style.left =
-        secondButtonSize / 2 - secondTipSize / 2 + "px";
+      this.firstTip.style.left = firstTipPosition;
+      this.secondTip.style.left = secondTipPosition;
     }
   }
 }

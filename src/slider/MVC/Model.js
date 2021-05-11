@@ -84,8 +84,6 @@ class Model extends EventEmitter {
     }
     stepValues.push(validOptions.max);
 
-    console.log(stepValues);
-
     validOptions.maxScaleNumbersCount =
       typeof validOptions.maxScaleNumbersCount !== "number"
         ? 10
@@ -104,7 +102,6 @@ class Model extends EventEmitter {
     }
     scaleValues.push(stepValues[stepValues.length - 1]);
 
-    console.log(scaleValues);
     validOptions.scaleValues = scaleValues;
 
     validOptions.firstValue =
