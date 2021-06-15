@@ -1,12 +1,17 @@
+import { View } from "../View";
 import { Subview } from "./Subview";
 
 class Tips extends Subview {
-  constructor(view) {
+  private view:View
+  private firstTip:HTMLElement
+  private secondTip:HTMLElement
+
+  constructor(view:View) {
     super();
     this.view = view;
     this.createTips();
   }
-  createTips() {
+ public createTips() {
     let firstTip = document.createElement("div");
     let secondTip = document.createElement("div");
     firstTip.className = "indicator";
@@ -20,12 +25,12 @@ class Tips extends Subview {
     this.render();
   }
 
-  render() {
+ public render() {
     const { hasTips, firstValue, secondValue, vertical } = this.view.options;
     this.firstTip.hidden = !hasTips;
     this.secondTip.hidden = !hasTips;
-    this.firstTip.innerText = firstValue;
-    this.secondTip.innerText = secondValue;
+    this.firstTip.innerText = String(firstValue);
+    this.secondTip.innerText =String( secondValue);
 
     const firstTipHeight = this.getElementHeight(this.firstTip, vertical);
     const secondTipHeight = this.getElementHeight(this.secondTip, vertical);

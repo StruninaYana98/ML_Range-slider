@@ -1,8 +1,14 @@
 import { FIRST_LOAD_OPTIONS, MODEL_CHANGED, VIEW_CHANGED } from "./actionTypes";
-import { EventEmitter } from "./EventEmmiter";
+import { EventEmitter , Listener} from "./EventEmmiter";
+import { Model } from "./Model";
+import { View } from "./View/View";
 
 class Controller extends EventEmitter {
-  constructor(model, view) {
+  private model:Model
+  private view:View
+
+  constructor(model : Model, view: View) {
+
     super();
     this.model = model;
     this.view = view;
@@ -14,70 +20,68 @@ class Controller extends EventEmitter {
     this.model.on(MODEL_CHANGED, (options) => this.view.rerender(options));
     this.model.firstLoadOptions();
   }
-  getSliderOptions() {
-    return this.model.options;
-  }
-  setMinValue(min) {
+
+  setMinValue(min: number) : void{
     this.model.setMinValue(min);
   }
-  getMinValue() {
+  getMinValue():number {
     return this.model.getMinValue();
   }
-  setMaxValue(max) {
+  setMaxValue(max:number):void {
     this.model.setMaxValue(max);
   }
-  getMaxValue() {
+  getMaxValue():number {
     return this.model.getMaxValue();
   }
-  setFirstValue(value) {
+  setFirstValue(value:number):void {
     this.model.setFirstValue(value);
   }
-  getFirstValue() {
+  getFirstValue():number {
     return this.model.getFirstValue();
   }
-  setSecondValue(value) {
+  setSecondValue(value: number):void {
     this.model.setSecondValue(value);
   }
-  getSecondValue() {
+  getSecondValue():number {
     return this.model.getSecondValue();
   }
-  setHasTips(hasTips) {
+  setHasTips(hasTips:boolean):void {
     this.model.setHasTips(hasTips);
   }
-  getHasTips() {
+  getHasTips():boolean {
     return this.model.getHasTips();
   }
-  setRange(range) {
+  setRange(range: boolean):void {
     this.model.setRange(range);
   }
-  getRange() {
+  getRange():boolean {
     return this.model.getRange();
   }
-  setHasScale(hasScale) {
+  setHasScale(hasScale:boolean):void {
     this.model.setHasScale(hasScale);
   }
-  getHasScale() {
+  getHasScale():boolean {
     return this.model.getHasScale();
   }
-  setVertical(vertical) {
+  setVertical(vertical:boolean):void {
     this.model.setVertical(vertical);
   }
-  getVertical() {
+  getVertical():boolean {
     return this.model.getVertical();
   }
-  setStep(step) {
+  setStep(step:number):void {
     this.model.setStep(step);
   }
-  getStep() {
+  getStep():number {
     return this.model.getStep();
   }
-  setMaxScaleNumbersCount(count) {
+  setMaxScaleNumbersCount(count:number):void {
     this.model.setMaxScaleNumbersCount(count);
   }
-  getMaxScaleNumbersCount() {
+  getMaxScaleNumbersCount():number {
     return this.model.getMaxScaleNumbersCount();
   }
-  addEventListener(eventHandler) {
+  addEventListener(eventHandler:Listener) {
     this.model.on(MODEL_CHANGED, (options) => eventHandler(options));
   }
 }

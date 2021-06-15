@@ -1,20 +1,24 @@
+import { View } from "../View";
 import { Subview } from "./Subview";
 
 class Slider extends Subview {
-  constructor(view) {
+  private view:View
+  public element: HTMLElement
+
+  constructor(view:View) {
     super();
     this.view = view;
     this.createSlider();
   }
 
-  createSlider() {
+ public  createSlider() {
     let slider = document.createElement(`div`);
     slider.className = "slider";
     this.element = slider;
     this.render();
   }
 
-  render() {
+ public render() {
     const { vertical } = this.view.options;
     this.element.style.position = "relative";
     if (vertical) {

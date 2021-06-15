@@ -2,6 +2,7 @@ import { Slider } from "./Subviews/Slider";
 import { ProgressBar } from "./Subviews/ProgressBar";
 import { SliderButton } from "./Subviews/SliderButton";
 import { EventEmitter } from "../EventEmmiter";
+import {IOptions, ISliderEvent} from "../Model"
 import { Scale } from "./Subviews/Scale";
 import { Tips } from "./Subviews/Tips";
 import {
@@ -11,12 +12,21 @@ import {
   VIEW_CHANGED,
 } from "../actionTypes";
 class View extends EventEmitter {
-  constructor(rootObject) {
+  private rootObject:HTMLElement
+  public options:IOptions
+  public slider:Slider
+  public progressBar:ProgressBar
+  public firstButton:SliderButton
+  public secondButton:SliderButton
+  private scale:Scale
+  private tips:Tips
+  
+  constructor(rootObject:HTMLElement) {
     super();
     this.rootObject = rootObject;
   }
 
-  createSlider(options) {
+  createSlider(options:IOptions) {
     this.options = options;
     this.slider = new Slider(this);
     this.rootObject.append(this.slider.element);
@@ -29,7 +39,7 @@ class View extends EventEmitter {
     this.addEventListeners();
   }
 
-  rerender(options) {
+  rerender(options:IOptions) {
     this.options = options;
     this.slider.render();
     this.progressBar.render();
@@ -58,7 +68,7 @@ class View extends EventEmitter {
     );
   }
 
-  notifySubscribers(event) {
+  notifySubscribers(event:ISliderEvent) :void{
     this.emit(VIEW_CHANGED, event);
   }
 }

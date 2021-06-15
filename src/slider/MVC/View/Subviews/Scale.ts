@@ -1,17 +1,21 @@
 import { SCALE_CLICK } from "../../actionTypes";
+import { View } from "../View";
 import { Subview } from "./Subview";
 
 class Scale extends Subview {
-  constructor(view) {
+  private view:View
+ private scaleElements:Array<HTMLElement>
+
+  constructor(view:View) {
     super();
     this.view = view;
     this.createScale();
   }
-  createScale() {
+ public createScale() {
     this.scaleElements = [];
     this.render();
   }
-  render() {
+ public render() {
     const { hasScale, vertical, scaleValues, min, max } = this.view.options;
     for (let item of this.scaleElements) {
       this.view.slider.element.removeChild(item);
@@ -28,7 +32,7 @@ class Scale extends Subview {
       );
       for (let number of scaleValues) {
         let scaleElem = document.createElement("div");
-        scaleElem.innerText = number;
+        scaleElem.innerText = String(number);
         this.view.slider.element.append(scaleElem);
         scaleElem.style.position = "absolute";
         let scaleElemSliderGap = `${20 + sliderHeight}px`;
@@ -41,8 +45,8 @@ class Scale extends Subview {
 
         let scaleElemWidth = this.getElementWidth(scaleElem, vertical);
         let scaleElemPosition = `${(scaleElem.style.bottom =
-          (sliderWidth * (number - min)) / (max - min) -
-          scaleElemWidth / 2)}px`;
+          String((sliderWidth * (number - min)) / (max - min) -
+          scaleElemWidth / 2))}px`;
         if (vertical) {
           scaleElem.style.bottom = scaleElemPosition;
         } else {
@@ -53,13 +57,13 @@ class Scale extends Subview {
       this.addEventListeners(this.scaleElements);
     }
   }
-  addEventListeners(scale) {
+  addEventListeners(scale:Array<HTMLElement>) {
     for (let scaleNumber of scale) {
-      scaleNumber.addEventListener("click", (e) => this.scaleClick(e));
+      scaleNumber.addEventListener("click", (e) => this.scaleClick(scaleNumber.innerText));
     }
   }
-  scaleClick(e) {
-    this.emit(SCALE_CLICK, e.target.innerText);
+  scaleClick(value:string) {
+    this.emit(SCALE_CLICK, value);
   }
 }
 export { Scale };

@@ -1,11 +1,16 @@
+import { View } from "../View";
 import { Subview } from "./Subview";
+
 class ProgressBar extends Subview {
-  constructor(view) {
+  private view:View
+  public element:HTMLElement
+
+  constructor(view:View) {
     super();
     this.view = view;
     this.createProgressBar();
   }
-  createProgressBar() {
+ public createProgressBar() {
     let progressBar = document.createElement("div");
     progressBar.className = "progressBar";
     progressBar.style.position = "absolute";
@@ -13,7 +18,7 @@ class ProgressBar extends Subview {
     this.element = progressBar;
     this.render();
   }
-  render() {
+ public render() {
     const { firstValue, secondValue, min, max, vertical } = this.view.options;
 
     let sliderWidth = this.getElementWidth(this.view.slider.element, vertical);
@@ -43,7 +48,7 @@ class ProgressBar extends Subview {
     }
   }
 
-  resizeProgressBar(action) {
+ public resizeProgressBar(action:string) {
     const { vertical, min, max } = this.view.options;
 
     let sliderLength = this.getElementWidth(this.view.slider.element, vertical);
@@ -80,7 +85,7 @@ class ProgressBar extends Subview {
     document.onmouseup = function () {
       document.onmousemove = document.onmouseup = null;
     };
-    return false;
+    
   }
 }
 export { ProgressBar };

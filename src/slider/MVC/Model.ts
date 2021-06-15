@@ -14,7 +14,26 @@ import {
   VERTICAL_CHANGED,
 } from "./actionTypes";
 import { EventEmitter } from "./EventEmmiter";
-const defaultOptions = {
+
+interface ISliderEvent{
+  action:string,
+  payload:number|boolean|string|object
+}
+interface IOptions  {
+  firstValue? : number,
+  secondValue?:number,
+  step?: number,
+  range?:boolean,
+  hasScale?:boolean,
+  hasTips?:boolean,
+  vertical?:boolean,
+  min?:number,
+  max?:number,
+  maxScaleNumbersCount?:number,
+  scaleValues?:number[],
+}
+
+const defaultOptions:IOptions = {
   firstValue: 0,
   secondValue: 5,
   step: 1,
@@ -26,16 +45,20 @@ const defaultOptions = {
   max: 10,
   maxScaleNumbersCount: 10,
 };
+
 class Model extends EventEmitter {
-  constructor(options) {
+
+  private options:IOptions
+
+  constructor(options: IOptions) {
     super();
     this.options = options;
   }
-  validateOptions(options) {
+ private validateOptions(options: IOptions):IOptions {
     if (typeof options !== "object") {
       return defaultOptions;
     }
-    let validOptions = { ...options };
+    let validOptions :IOptions= { ...options };
     validOptions.range = !!validOptions.range;
     validOptions.hasScale = !!validOptions.hasScale;
     validOptions.hasTips = !!validOptions.hasTips;
@@ -76,11 +99,11 @@ class Model extends EventEmitter {
       validOptions.step = (validOptions.max - validOptions.min) / 10;
     }
 
-    let stepValues = [];
-    let i = validOptions.min;
-    while (i < validOptions.max) {
-      stepValues.push(i);
-      i = i + validOptions.step;
+    let stepValues:number[] = [];
+    let valueInRange:number = validOptions.min;
+    while (valueInRange < validOptions.max) {
+      stepValues.push(valueInRange);
+      valueInRange = valueInRange + validOptions.step;
     }
     stepValues.push(validOptions.max);
 
@@ -91,11 +114,11 @@ class Model extends EventEmitter {
         ? 2
         : Math.ceil(validOptions.maxScaleNumbersCount);
 
-    let indexDiff = Math.ceil(
+    let indexDiff:number = Math.ceil(
       stepValues.length / (validOptions.maxScaleNumbersCount - 1)
     );
-    let scaleValues = [];
-    let index = 0;
+    let scaleValues:number[] = [];
+    let index:number = 0;
     while (index < stepValues.length - 1) {
       scaleValues.push(stepValues[index]);
       index = index + indexDiff;
@@ -125,89 +148,87 @@ class Model extends EventEmitter {
     return validOptions;
   }
 
-  findClosestValue(value, array) {
-    let diffArray = [];
-    for (let item of array) {
-      diffArray.push(Math.abs(item - value));
-    }
-    let min = Math.min(...diffArray);
-    let minIndex = diffArray.findIndex((item) => item === min);
+ private findClosestValue(value:number, array:number[]):number {
+    let diffArray:number[] = [];
+    array.forEach(item=>diffArray.push(Math.abs(item - value)))
+    let min:number = Math.min(...diffArray);
+    let minIndex:number = diffArray.findIndex((item) => item === min);
     return array[minIndex];
   }
 
-  firstLoadOptions() {
+ public firstLoadOptions():void {
     this.options = this.validateOptions(this.options);
     this.emit(FIRST_LOAD_OPTIONS, { ...this.options });
   }
 
-  setMinValue(min) {
+ public setMinValue(min:number):void {
     this.eventHandler({ action: MIN_VALUE_CHANGED, payload: min });
   }
-  getMinValue() {
+  public  getMinValue():number {
     return this.options.min;
   }
-  setMaxValue(max) {
+  public  setMaxValue(max:number):void {
     this.eventHandler({ action: MAX_VALUE_CHANGED, payload: max });
   }
-  getMaxValue() {
+  public  getMaxValue():number {
     return this.options.max;
   }
-  setFirstValue(value) {
+  public  setFirstValue(value:number):void {
     this.eventHandler({ action: FIRST_VALUE_CHANGED, payload: value });
   }
-  getFirstValue() {
+  public  getFirstValue():number {
     return this.options.firstValue;
   }
-  setSecondValue(value) {
+  public  setSecondValue(value:number):void {
     this.eventHandler({ action: SECOND_VALUE_CHANGED, payload: value });
   }
-  getSecondValue() {
+  public  getSecondValue():number {
     return this.options.secondValue;
   }
-  setHasTips(hasTips) {
+  public  setHasTips(hasTips:boolean):void {
     this.eventHandler({ action: HAS_TIPS_CHANGED, payload: hasTips });
   }
-  getHasTips() {
+  public  getHasTips():boolean {
     return this.options.hasTips;
   }
-  setRange(range) {
+  public  setRange(range:boolean):void {
     this.eventHandler({ action: RANGE_CHANGED, payload: range });
   }
-  getRange() {
+  public  getRange():boolean {
     return this.options.range;
   }
-  setHasScale(hasScale) {
+  public  setHasScale(hasScale:boolean):void {
     this.eventHandler({ action: HAS_SCALE_CHANGED, payload: hasScale });
   }
-  getHasScale() {
+  public  getHasScale():boolean {
     return this.options.hasScale;
   }
-  setVertical(vertical) {
+  public  setVertical(vertical:boolean):void {
     this.eventHandler({ action: VERTICAL_CHANGED, payload: vertical });
   }
-  getVertical() {
+  public  getVertical():boolean {
     return this.options.vertical;
   }
-  setStep(step) {
+  public  setStep(step:number):void {
     this.eventHandler({ action: STEP_CHANGED, payload: step });
   }
-  getStep() {
+  public   getStep():number {
     return this.options.step;
   }
-  setMaxScaleNumbersCount(count) {
+  public setMaxScaleNumbersCount(count:number):void {
     this.eventHandler({
       action: MAX_SCALE_NUMBERS_COUNT_CHANGED,
       payload: count,
     });
   }
-  getMaxScaleNumbersCount() {
+  public  getMaxScaleNumbersCount():number {
     return this.options.maxScaleNumbersCount;
   }
-  eventHandler(event) {
+ public eventHandler(event:ISliderEvent):void {
     this.reducer(event.action, event.payload);
   }
-  reducer(action, value) {
-    let options = { ...this.options };
+ private reducer(action: string, value:number|boolean|string|object) {
+    let options :IOptions = { ...this.options };
     switch (action) {
       case FIRST_VALUE_CHANGED:
         options.firstValue = Number(value);
@@ -236,16 +257,16 @@ class Model extends EventEmitter {
         }
         break;
       case HAS_TIPS_CHANGED:
-        options.hasTips = value;
+        options.hasTips = Boolean(value);
         break;
       case RANGE_CHANGED:
-        options.range = value;
+        options.range = Boolean(value);
         break;
       case HAS_SCALE_CHANGED:
-        options.hasScale = value;
+        options.hasScale =Boolean(value);
         break;
       case VERTICAL_CHANGED:
-        options.vertical = value;
+        options.vertical =Boolean(value);
         break;
       case STEP_CHANGED:
         options.step = Number(value);
@@ -258,4 +279,4 @@ class Model extends EventEmitter {
     this.emit(MODEL_CHANGED, { ...this.options });
   }
 }
-export { Model };
+export { Model, IOptions, ISliderEvent };

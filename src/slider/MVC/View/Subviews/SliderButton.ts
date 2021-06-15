@@ -1,13 +1,18 @@
+import { View } from "../View";
 import { Subview } from "./Subview";
 
 class SliderButton extends Subview {
-  constructor(view, side) {
+  private view:View
+  private side:string
+  public element:HTMLElement
+
+  constructor(view:View, side:string) {
     super();
     this.view = view;
     this.side = side;
     this.createButton();
   }
-  createButton() {
+ public createButton() {
     let button = document.createElement("div");
     button.className = "sliderButton";
     this.view.progressBar.element.append(button);
@@ -15,7 +20,7 @@ class SliderButton extends Subview {
     this.element.style.position = "absolute";
     this.render();
   }
-  render() {
+ public render() {
     const { vertical } = this.view.options;
     const buttonWidth = this.getElementWidth(this.element, vertical);
     const buttonHeight = this.getElementHeight(this.element, vertical);
