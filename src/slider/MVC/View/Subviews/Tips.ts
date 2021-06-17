@@ -43,11 +43,11 @@ class Tips extends Subview {
     }
 
     const firstButtonWidth = this.getElementWidth(
-      this.view.firstButton.element,
+      this.view.firstButton.element.get(0),
       vertical
     );
     const secondButtonWidth = this.getElementWidth(
-      this.view.secondButton.element,
+      this.view.secondButton.element.get(0),
       vertical
     );
 

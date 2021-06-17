@@ -29,10 +29,10 @@ class View extends EventEmitter {
   createSlider(options:IOptions) {
     this.options = options;
     this.slider = new Slider(this);
-    this.rootObject.append(this.slider.element);
+    this.rootObject.append(this.slider.element.get(0));
     this.progressBar = new ProgressBar(this);
     this.firstButton = new SliderButton(this, "first");
-    this.firstButton.element.hidden = !options.range;
+    this.firstButton.element.get(0).hidden = !options.range;
     this.secondButton = new SliderButton(this, "second");
     this.scale = new Scale(this);
     this.tips = new Tips(this);
@@ -43,7 +43,7 @@ class View extends EventEmitter {
     this.options = options;
     this.slider.render();
     this.progressBar.render();
-    this.firstButton.element.hidden = !options.range;
+    this.firstButton.element.get(0).hidden = !options.range;
     this.firstButton.render();
     this.secondButton.render();
     this.scale.render();
@@ -51,10 +51,10 @@ class View extends EventEmitter {
   }
 
   addEventListeners() {
-    this.firstButton.element.addEventListener("mousedown", () =>
+    this.firstButton.element.get(0).addEventListener("mousedown", () =>
       this.progressBar.resizeProgressBar(FIRST_VALUE_CHANGED)
     );
-    this.secondButton.element.addEventListener("mousedown", () =>
+    this.secondButton.element.get(0).addEventListener("mousedown", () =>
       this.progressBar.resizeProgressBar(SECOND_VALUE_CHANGED)
     );
     this.progressBar.on(FIRST_VALUE_CHANGED, (value) =>

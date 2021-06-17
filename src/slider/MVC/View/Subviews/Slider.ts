@@ -2,31 +2,26 @@ import { View } from "../View";
 import { Subview } from "./Subview";
 
 class Slider extends Subview {
-  private view:View
-  public element: HTMLElement
+  private view: View;
+  public element: JQuery<HTMLElement>;
 
-  constructor(view:View) {
+  constructor(view: View) {
     super();
     this.view = view;
     this.createSlider();
   }
 
- public  createSlider() {
-    let slider = document.createElement(`div`);
-    slider.className = "slider";
-    this.element = slider;
+  public createSlider() {
+    this.element = $('<div class="slider"></div>');
     this.render();
   }
 
- public render() {
+  public render() {
     const { vertical } = this.view.options;
-    this.element.style.position = "relative";
     if (vertical) {
-      this.element.style.width = "5px";
-      this.element.style.height = "100%";
+      this.element.addClass("slider__vertical");
     } else {
-      this.element.style.height = "5px";
-      this.element.style.width = "100%";
+      this.element.removeClass("slider__vertical");
     }
   }
 }
