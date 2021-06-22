@@ -4,11 +4,11 @@ import "./ControlsPanel/ControlsPanel.css";
 import "./index.css";
 import { ControlsPanel } from "./ControlsPanel/ControlsPanel";
 
-new ControlsPanel(document.getElementById("panel1"), {
+new ControlsPanel($("#1234"), {
   sliderID: "slider1",
 });
 
-new ControlsPanel(document.getElementById("panel2"), {
+/*new ControlsPanel($("#panel1"), {
   firstValue: 0,
   secondValue: 3,
   step: 3,
@@ -19,4 +19,4 @@ new ControlsPanel(document.getElementById("panel2"), {
   min: 0,
   max: 12,
   sliderID: "slider2",
-});
+});*/

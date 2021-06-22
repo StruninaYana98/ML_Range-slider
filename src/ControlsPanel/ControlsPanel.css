@@ -1,4 +1,16 @@
-.controlsWrapper{
+.controlsPanel{
+    display: flex;
+    flex-wrap: wrap;
+    color:rgb(156, 156, 156);
+    font-size:12px;
+    line-height: 12px;
+    font-family: system-ui;
+    font-weight: 500;
+    padding:30px;
+    margin:30px;
+    width:fit-content;
+}
+.controlsPanel__wrapper{
     display: flex;
     justify-content: space-around;
   flex-wrap: wrap;
@@ -9,7 +21,7 @@
     border-radius: 10px;
     background-color: white;
 }
-.sliderWrapper{
+.controlsPanel__slider-wrapper{
     display: flex;
     align-items: center;
     justify-content: center;
@@ -20,18 +32,19 @@
 .numberInput{
     margin:30px;
 }
-.controlElementWrapper{
+.toggle__wrapper, .numeric-input__wrapper{
     display: flex;
     align-items: center;
     padding:10px;
     
     width: fit-content;
 }
-.controlElementHeader{
+.toggle__header, .numeric-input__header{
     margin:2px;
     color:rgb(156, 156, 156);
+    word-wrap: break-word;
 }
-.toggleInput{
+.toggle__input{
     cursor: pointer;
     width:36px;
     height: 18px;
@@ -39,7 +52,7 @@
     position: relative;
    
 }
-.toggleInput::before{
+.toggle__input::before{
     content: '';
   position: absolute;
   top:0;
@@ -53,7 +66,7 @@
   
  
 }
-.toggleInput::after{
+.toggle__input::after{
     content: '';
     position: absolute;
     top:0px;
@@ -67,15 +80,15 @@
     border-radius: 3px;
     transition: transform 0.3s; 
 }
-.toggleInput:checked::before{
+.toggle__input:checked::before{
     background: linear-gradient(180deg, rgba(132, 240, 146) 0%,  rgba(157, 241, 206) 100%);
     
 }
-.toggleInput:checked::after{
+.toggle__input:checked::after{
     transform: translateX(19px);
     transition: transform 0.3s; 
 }
-.buttonsInputWrapper{
+.numeric-input__buttons-input-wrapper{
     display: flex;
     align-items: center;
     font-size: 18px;
@@ -83,7 +96,7 @@
     margin:5px;
     padding:3px;
 }
-.numericInput{
+.numeric-input__input{
     outline: none;
     border:1px solid white;
     color:rgb(156, 156, 156);
@@ -97,18 +110,18 @@
     border-radius:3px;
     transition: all 0.3s linear;
 }
-.numericInput:hover{
+.numeric-input__input:hover{
     border: 1px solid rgba(132, 240, 146);
 }
-.numberInput:active{
+.numeric-input__input:active{
     border: 1px solid rgba(132, 240, 146);
 }
-.numericInput::-webkit-outer-spin-button,
-.numericInput::-webkit-inner-spin-button {
+.numeric-input__input::-webkit-outer-spin-button,
+.numeric-input__input::-webkit-inner-spin-button {
 	display: none;
 }
 
-.inputButton{
+.numeric-input__button{
     cursor:pointer;
     width: 22px;
     height: 22px;
@@ -123,6 +136,6 @@
     margin-left:1px;
     margin-right: 1px;
 }
-.inputButton:hover{
+.numeric-input__button:hover{
     background: linear-gradient(180deg, rgba(132, 240, 146) 0%,  rgba(157, 241, 206) 100%);
 }

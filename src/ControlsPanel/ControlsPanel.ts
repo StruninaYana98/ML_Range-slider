@@ -1,14 +1,13 @@
 import { Controller } from "../slider/MVC/Controller";
 import { IOptions } from "../slider/MVC/Model";
-import { NumericInput } from "./ControlsElements/NumericInput";
-import { Toggle } from "./ControlsElements/Toggle";
+import { NumericInput } from "./ControlsElements/numericInput/NumericInput";
+import { Toggle } from "./ControlsElements/toggle/Toggle";
 
 interface IPanelOptions extends IOptions {
   sliderID: string;
 }
 class ControlsPanel {
   private slider: Controller;
-  public element: HTMLElement;
   private toggleTips: Toggle;
   private toggleRange: Toggle;
   private toggleScale: Toggle;
@@ -20,109 +19,102 @@ class ControlsPanel {
   private step: NumericInput;
   private maxScaleNumbersCount: NumericInput;
 
-  constructor(elem: HTMLElement, options: IPanelOptions) {
+  constructor(elem: JQuery<HTMLElement>, options: IPanelOptions) {
     this.createControls(elem, options);
   }
-  createControls(elem: HTMLElement, options: IPanelOptions) {
-    let sliderwrapper = document.createElement("div");
-    sliderwrapper.className = "sliderWrapper";
-    sliderwrapper.id = options.sliderID;
-    elem.append(sliderwrapper);
-
-    this.slider = $("#" + options.sliderID).ml_RangeSlider(options);
-
-    this.element = document.createElement("div");
-    this.element.className = "controlsWrapper";
-    elem.append(this.element);
-
-    this.toggleTips = new Toggle(this, "tips", this.slider.getHasTips());
-    this.toggleRange = new Toggle(this, "range", this.slider.getRange());
-    this.toggleScale = new Toggle(this, "scale", this.slider.getHasScale());
+  createControls(elem: JQuery<HTMLElement>, options: IPanelOptions) {
+    this.slider = elem.find(".js-slider").ml_RangeSlider(options);
+    this.toggleTips = new Toggle(elem, ".js-tips", this.slider.getHasTips());
+    this.toggleRange = new Toggle(elem, ".js-range", this.slider.getRange());
+    this.toggleScale = new Toggle(elem, ".js-scale", this.slider.getHasScale());
     this.toggleVertical = new Toggle(
-      this,
-      "vertical",
+      elem,
+      ".js-vertical",
       this.slider.getVertical()
     );
-    this.minValue = new NumericInput(this, "min", this.slider.getMinValue());
-    this.maxValue = new NumericInput(this, "max", this.slider.getMaxValue());
+    this.minValue = new NumericInput(elem, ".js-min", this.slider.getMinValue());
+    this.maxValue = new NumericInput(elem, ".js-max", this.slider.getMaxValue());
     this.firstValue = new NumericInput(
-      this,
-      "first\n value",
+      elem,
+      ".js-first-value",
       this.slider.getFirstValue()
     );
     this.secondValue = new NumericInput(
-      this,
-      "second\n value",
+      elem,
+      ".js-second-value",
       this.slider.getSecondValue()
     );
-    this.step = new NumericInput(this, "step", this.slider.getStep());
+    this.step = new NumericInput(elem, ".js-step", this.slider.getStep());
     this.maxScaleNumbersCount = new NumericInput(
-      this,
-      "max\nscale\nnumbers\ncount",
+      elem,
+      ".js-max-scale-numbers-count",
       this.slider.getMaxScaleNumbersCount()
     );
     this.addEventListeners();
   }
 
   addEventListeners() {
-    this.toggleTips.input.onchange = () => {
-      this.slider.setHasTips(Boolean(this.toggleTips.input.checked));
-    };
+    this.toggleTips.input.on("change", () => {
+      this.slider.setHasTips(Boolean(this.toggleTips.input.prop("checked")));
+    });
 
-    this.toggleRange.input.onchange = (e) => {
-      this.slider.setRange(Boolean(this.toggleRange.input.checked));
-    };
+    this.toggleRange.input.on("change", (e) => {
+      this.slider.setRange(Boolean(this.toggleRange.input.prop("checked")));
+    });
 
-    this.toggleScale.input.onchange = (e) => {
-      this.slider.setHasScale(Boolean(this.toggleScale.input.checked));
-    };
+    this.toggleScale.input.on("change", (e) => {
+      this.slider.setHasScale(Boolean(this.toggleScale.input.prop("checked")));
+    });
 
-    this.toggleVertical.input.onchange = (e) => {
-      this.slider.setVertical(Boolean(this.toggleVertical.input.checked));
-    };
-
-    this.minValue.input.onchange = (e) =>
-      this.slider.setMinValue(Number(this.minValue.input.value));
-
-    this.maxValue.input.onchange = (e) => {
-      this.slider.setMaxValue(Number(this.maxValue.input.value));
-    };
-
-    this.firstValue.input.onchange = (e) => {
-      this.slider.setFirstValue(Number(this.firstValue.input.value));
-    };
-
-    this.secondValue.input.onchange = (e) => {
-      this.slider.setSecondValue(Number(this.secondValue.input.value));
-    };
-
-    this.step.input.onchange = (e) => {
-      this.slider.setStep(Number(this.step.input.value));
-    };
-
-    this.maxScaleNumbersCount.input.onchange = (e) => {
-      this.slider.setMaxScaleNumbersCount(
-        Number(this.maxScaleNumbersCount.input.value)
+    this.toggleVertical.input.on("change", (e) => {
+      this.slider.setVertical(
+        Boolean(this.toggleVertical.input.prop("checked"))
       );
-    };
+    });
+
+    this.minValue.input.on("change", () =>
+      this.slider.setMinValue(Number(this.minValue.input.prop("value")))
+    );
+
+    this.maxValue.input.on("change", () => {
+      this.slider.setMaxValue(Number(this.maxValue.input.prop("value")));
+    });
+
+    this.firstValue.input.on("change", () => {
+      this.slider.setFirstValue(Number(this.firstValue.input.prop("value")));
+    });
+
+    this.secondValue.input.on("change", () => {
+      this.slider.setSecondValue(Number(this.secondValue.input.prop("value")));
+    });
+
+    this.step.input.on("change", () => {
+      this.slider.setStep(Number(this.step.input.prop("value")));
+    });
+
+    this.maxScaleNumbersCount.input.on("change", () => {
+      this.slider.setMaxScaleNumbersCount(
+        Number(this.maxScaleNumbersCount.input.prop("value"))
+      );
+    });
 
     this.slider.addEventListener((options) => {
-      this.firstValue.input.value = options.firstValue;
+      this.firstValue.input.prop("value",options.firstValue ) ;
     });
     this.slider.addEventListener((options) => {
-      this.secondValue.input.value = options.secondValue;
+      this.secondValue.input.prop("value" , options.secondValue);
     });
     this.slider.addEventListener((options) => {
-      this.minValue.input.value = options.min;
+      this.minValue.input.prop("value", options.min);
     });
     this.slider.addEventListener((options) => {
-      this.maxValue.input.value = options.max;
+      this.maxValue.input.prop("value", options.max);
     });
     this.slider.addEventListener((options) => {
-      this.step.input.value = options.step;
+      this.step.input.prop("value", options.step);
     });
     this.slider.addEventListener((options) => {
-      this.maxScaleNumbersCount.input.value = options.maxScaleNumbersCount;
+      this.maxScaleNumbersCount.input.prop("value", options.maxScaleNumbersCount);
     });
   }
 }

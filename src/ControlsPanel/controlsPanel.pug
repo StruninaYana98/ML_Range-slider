@@ -1,0 +1,17 @@
+include ControlsElements/toggle/toggle.pug
+include ControlsElements/numericInput/numericInput.pug
+
+mixin controlsPanel(panelId)
+  .controlsPanel(id=panelId)
+    .controlsPanel__slider-wrapper.js-slider
+    .controlsPanel__wrapper
+      +toggle("js-tips", "tips")
+      +toggle("js-range", "range")
+      +toggle("js-scale", "scale")
+      +toggle("js-vertical", "vertical")
+      +numericInput("js-first-value", "first\nvalue")
+      +numericInput("js-second-value", "second\nvalue")
+      +numericInput("js-min", "min")
+      +numericInput("js-max", "max")
+      +numericInput("js-step", "step")
+      +numericInput("js-max-scale-numbers-count", "max\nscale\nnumbers\ncount")

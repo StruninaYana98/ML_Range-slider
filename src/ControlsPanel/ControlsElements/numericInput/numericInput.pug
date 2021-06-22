@@ -1,0 +1,7 @@
+mixin numericInput(jqueryClass, header)
+  .numeric-input__wrapper
+    h4.numeric-input__header=header
+    .numeric-input__buttons-input-wrapper
+      button.numeric-input__button.js-minus-button -
+      input.numeric-input__input(class=jqueryClass type="number")
+      button.numeric-input__button.js-plus-button +
