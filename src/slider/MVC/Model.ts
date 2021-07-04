@@ -17,7 +17,11 @@ import { EventEmitter } from "./EventEmmiter";
 
 interface ISliderEvent {
   action: string;
-  payload: number | boolean | string | object;
+  payload: number | boolean | string | object|  IOptions;
+}
+interface IModelEvent{
+  action: string;
+  payload: IOptions;
 }
 interface IOptions {
   firstValue?: number;
@@ -197,7 +201,7 @@ class Model extends EventEmitter {
     }
 
     this.options = this.validateOptions(options);
-    this.emit(MODEL_CHANGED, { ...this.options });
+    this.emit(MODEL_CHANGED, { action: action, payload: { ...this.options } });
   }
 
   private validateOptions(options: IOptions): IOptions {
@@ -350,4 +354,4 @@ class Model extends EventEmitter {
     return step;
   }
 }
-export { Model, IOptions, ISliderEvent };
+export { Model, IOptions, ISliderEvent, IModelEvent };

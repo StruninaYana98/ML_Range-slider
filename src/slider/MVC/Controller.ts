@@ -82,7 +82,7 @@ class Controller extends EventEmitter {
     return this.model.getMaxScaleNumbersCount();
   }
   addEventListener(eventHandler:Listener) {
-    this.model.on(MODEL_CHANGED, (options) => eventHandler(options));
+    this.model.on(MODEL_CHANGED, (event) => eventHandler(event.payload));
   }
 }
 export { Controller };

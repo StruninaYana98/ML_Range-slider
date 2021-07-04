@@ -1,8 +1,18 @@
+import {
+  MIN_VALUE_CHANGED,
+  MAX_VALUE_CHANGED,
+  HAS_TIPS_CHANGED,
+  RANGE_CHANGED,
+  HAS_SCALE_CHANGED,
+  VERTICAL_CHANGED,
+  STEP_CHANGED,
+  MAX_SCALE_NUMBERS_COUNT_CHANGED,
+} from "./../actionTypes";
 import { Slider } from "./Subviews/Slider";
 import { ProgressBar } from "./Subviews/ProgressBar";
 import { SliderButton } from "./Subviews/SliderButton";
 import { EventEmitter } from "../EventEmmiter";
-import {IOptions, ISliderEvent} from "../Model"
+import { IOptions, ISliderEvent, IModelEvent } from "../Model";
 import { Scale } from "./Subviews/Scale";
 import { Tips } from "./Subviews/Tips";
 import {
@@ -12,30 +22,28 @@ import {
   VIEW_CHANGED,
 } from "../actionTypes";
 class View extends EventEmitter {
-  private rootObject:HTMLElement
-  public options:IOptions
-  public slider:Slider
-  public progressBar:ProgressBar
-  public firstButton:SliderButton
-  public secondButton:SliderButton
-  private scale:Scale
-  private tips:Tips
-  
-  constructor(rootObject:HTMLElement) {
+  private rootObject: JQuery<HTMLElement>;
+  public options: IOptions;
+  public slider: Slider;
+  public progressBar: ProgressBar;
+  public firstButton: SliderButton;
+  public secondButton: SliderButton;
+  private scale: Scale;
+  private tips: Tips;
+
+  constructor(rootObject: JQuery<HTMLElement>) {
     super();
     this.rootObject = rootObject;
   }
 
-  createSlider(options:IOptions) {
+  createSlider(options: IOptions) {
     this.options = options;
     this.slider = new Slider(this);
-    this.rootObject.append(this.slider.element.get(0));
+    this.rootObject.append(this.slider.element);
     this.progressBar = new ProgressBar(this);
     this.firstButton = new SliderButton(this, "first");
-    if(options.range){
-      this.firstButton.showButton()
-    }else{
-      this.firstButton.hideButton()
+    if (!options.range) {
+      this.firstButton.hideButton();
     }
     this.secondButton = new SliderButton(this, "second");
     this.scale = new Scale(this);
@@ -43,19 +51,72 @@ class View extends EventEmitter {
     this.addEventListeners();
   }
 
-  rerender(options:IOptions) {
-    this.options = options;
-    this.slider.render();
-    this.progressBar.render();
-    if(options.range){
-      this.firstButton.showButton()
-    }else{
-      this.firstButton.hideButton()
+  rerender(event: IModelEvent) {
+    this.options = event.payload;
+
+    switch (event.action) {
+      case FIRST_VALUE_CHANGED:
+        this.progressBar.render();
+        this.tips.render();
+        break;
+
+      case SECOND_VALUE_CHANGED:
+        this.progressBar.render();
+        this.tips.render();
+        break;
+
+      case MIN_VALUE_CHANGED:
+        this.progressBar.render();
+        this.scale.render();
+        this.tips.render();
+        break;
+
+      case MAX_VALUE_CHANGED:
+        this.progressBar.render();
+        this.scale.render();
+        this.tips.render();
+        break;
+
+      case SCALE_CLICK:
+        this.progressBar.render();
+        this.tips.render();
+        break;
+
+      case HAS_TIPS_CHANGED:
+        this.tips.render();
+
+      case RANGE_CHANGED:
+        this.progressBar.render();
+        if (this.options.range) {
+          this.firstButton.showButton();
+        } else {
+          this.firstButton.hideButton();
+        }
+        break;
+
+      case HAS_SCALE_CHANGED:
+        this.scale.render();
+        break;
+
+      case VERTICAL_CHANGED:
+        this.slider.render();
+        this.progressBar.render();
+        this.firstButton.render();
+        this.secondButton.render();
+        this.scale.render();
+        this.tips.render();
+        break;
+
+      case STEP_CHANGED:
+        this.progressBar.render();
+        this.scale.render();
+        this.tips.render();
+        break;
+
+      case MAX_SCALE_NUMBERS_COUNT_CHANGED:
+        this.scale.render();
+        break;
     }
-    this.firstButton.render();
-    this.secondButton.render();
-    this.scale.render();
-    this.tips.render();
   }
 
   addEventListeners() {
@@ -76,7 +137,7 @@ class View extends EventEmitter {
     );
   }
 
-  notifySubscribers(event:ISliderEvent) :void{
+  notifySubscribers(event: ISliderEvent): void {
     this.emit(VIEW_CHANGED, event);
   }
 }
