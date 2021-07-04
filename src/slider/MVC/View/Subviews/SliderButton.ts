@@ -43,5 +43,11 @@ class SliderButton extends Subview {
       );
     }
   }
+  public hideButton(){
+    this.element.addClass("sliderButton_hidden")
+  }
+  public showButton(){
+    this.element.removeClass("sliderButton_hidden");
+  }
 }
 export { SliderButton };

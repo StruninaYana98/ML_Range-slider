@@ -89,7 +89,9 @@ bottom:-7px;
 .sliderButton:active::after{
     background: linear-gradient(180deg, rgba(132, 240, 146, 0.9) 0%,  rgba(157, 241, 206, 0.9) 100%);
 }
-
+.sliderButton_hidden{
+    visibility: hidden;
+}
 .indicator{
     padding:4px;
    background: linear-gradient(180deg, rgba(132, 240, 146, 1) 0%,  rgba(157, 241, 206, 1) 100%);
