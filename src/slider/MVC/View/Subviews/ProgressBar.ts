@@ -1,22 +1,24 @@
-import { View } from "../View";
+import { IOptions } from "../../Model";
 import { Subview } from "./Subview";
 
 class ProgressBar extends Subview {
-  private view: View;
+  public rootObject: JQuery<HTMLElement>;
   public element: JQuery<HTMLElement>;
 
-  constructor(view: View) {
+  constructor(rootObject: JQuery<HTMLElement>, options: IOptions) {
     super();
-    this.view = view;
-    this.createProgressBar();
+    this.rootObject = rootObject;
+    this.createProgressBar(rootObject, options);
   }
-  public createProgressBar() {
+
+  public createProgressBar(rootObject: JQuery<HTMLElement>, options: IOptions) {
     this.element = $('<div class="progressBar"></div>');
-    this.view.slider.element.append(this.element);
-    this.render();
+    rootObject.append(this.element);
+    this.render(options);
   }
-  public render() {
-    const { firstValue, secondValue, min, max, vertical } = this.view.options;
+
+  public render(options: IOptions) {
+    const { firstValue, secondValue, min, max, vertical } = options;
     let progressBarStartPosition = (
       (100 * (firstValue - min)) /
       (max - min)
@@ -42,18 +44,15 @@ class ProgressBar extends Subview {
     }
   }
 
-  public resizeProgressBar(action: string) {
-    const { vertical, min, max } = this.view.options;
-    let sliderLength = this.getElementWidth(
-      this.view.slider.element.get(0),
-      vertical
-    );
+  public resizeProgressBar(action: string, options: IOptions) {
+    const { vertical, min, max } = options;
+    let sliderLength = this.getElementWidth(this.rootObject, vertical);
     let sliderStartPosition = this.getElementStartPosition(
-      this.view.slider.element.get(0),
+      this.rootObject,
       vertical
     );
     let sliderEndPosition = this.getElementEndPosition(
-      this.view.slider.element.get(0),
+      this.rootObject,
       vertical
     );
 
@@ -76,7 +75,6 @@ class ProgressBar extends Subview {
         document.onmousemove = document.onmouseup = null;
       };
     };
-    
   }
 
   private checkIsMouseInSlider(
@@ -95,4 +93,5 @@ class ProgressBar extends Subview {
     );
   }
 }
+
 export { ProgressBar };

@@ -1,60 +1,70 @@
 import { SCALE_CLICK } from "../../actionTypes";
+import { IOptions } from "../../Model";
 import { View } from "../View";
 import { Subview } from "./Subview";
 
 class Scale extends Subview {
-  private view: View;
+  public rootObject: JQuery<HTMLElement>;
   private scaleElements: Array<JQuery<HTMLElement>>;
 
-  constructor(view: View) {
+  constructor(rootObject: JQuery<HTMLElement>, options: IOptions) {
     super();
-    this.view = view;
-    this.createScale();
+    this.rootObject = rootObject;
+    this.createScale(rootObject, options);
   }
-  public createScale() {
-    this.render();
-  }
-  public render() {
-    const { hasScale, vertical, scaleValues, min, max } = this.view.options;
 
-    this.view.slider.element.find(".slider_scaleElement").remove();
-
+  public createScale(rootObject: JQuery<HTMLElement>, options: IOptions): void {
     this.scaleElements = [];
+    this.render(options);
+  }
+
+  public render(options: IOptions): void {
+    const { hasScale, vertical, scaleValues, min, max } = options;
+
+    this.clearScale(this.scaleElements);
+    /*  this.rootObject.find(".slider_scaleElement").remove();
+
+    this.scaleElements = [];*/
     if (hasScale) {
-      let sliderWidth = this.getElementWidth(
-        this.view.slider.element.get(0),
-        vertical
-      );
-      let sliderHeight = this.getElementHeight(
-        this.view.slider.element.get(0),
-        vertical
-      );
+      const sliderWidth = this.getElementWidth(this.rootObject, vertical);
+      const sliderHeight = this.getElementHeight(this.rootObject, vertical);
+
       scaleValues.forEach((number) => {
-        let scaleElem = $(
+        const scaleElem = $(
           `<div class="slider_scaleElement">${String(number)}</div>`
         );
-        this.view.slider.element.append(scaleElem);
+        this.rootObject.append(scaleElem);
 
-        let scaleElemSliderGap = `${20 + sliderHeight}px`;
+        const scaleElemSliderGap = `${sliderHeight + 20}px`;
         scaleElem.css(vertical ? "left" : "top", scaleElemSliderGap);
 
-        let scaleElemWidth = this.getElementWidth(scaleElem.get(0), vertical);
-        let scaleElemPosition = `${String(
-          (sliderWidth * (number - min)) / (max - min) - scaleElemWidth / 2
-        )}px`;
+        const scaleElemWidth = this.getElementWidth(scaleElem, vertical);
+        const scaleElemPosition = `${String(
+          ((number - min) / (max - min) - scaleElemWidth / (sliderWidth * 2)) *
+            100
+        )}%`;
         scaleElem.css(vertical ? "bottom" : "left", scaleElemPosition);
         this.scaleElements.push(scaleElem);
       });
+
       this.addEventListeners(this.scaleElements);
     }
   }
-  addEventListeners(scale: Array<JQuery<HTMLElement>>) {
-    for (let scaleNumber of scale) {
-      scaleNumber.on("click", (e) => this.onsScaleClick(scaleNumber.text()));
+
+  public clearScale(scale: Array<JQuery<HTMLElement>>): void {
+    scale.forEach((elem) => elem.remove());
+    scale = [];
+  }
+
+  private addEventListeners(scale: Array<JQuery<HTMLElement>>): void {
+    for (let scaleElement of scale) {
+      scaleElement.on("click", (e) => this.onScaleClick(scaleElement));
     }
   }
-  onsScaleClick(value: string) {
-    this.emit(SCALE_CLICK, value);
+
+  private onScaleClick(scaleElement: JQuery<HTMLElement>): void {
+    this.emit(SCALE_CLICK, scaleElement.text());
   }
 }
+
 export { Scale };

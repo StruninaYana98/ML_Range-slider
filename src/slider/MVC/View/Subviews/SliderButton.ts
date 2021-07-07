@@ -1,53 +1,68 @@
-import { View } from "../View";
+import { IOptions } from "../../Model";
 import { Subview } from "./Subview";
 
 class SliderButton extends Subview {
-  private view: View;
+  private rootObject: JQuery<HTMLElement>;
   private side: string;
   public element: JQuery<HTMLElement>;
 
-  constructor(view: View, side: string) {
+  constructor(
+    rootObject: JQuery<HTMLElement>,
+    options: IOptions,
+    side: string
+  ) {
     super();
-    this.view = view;
+    this.rootObject = rootObject;
     this.side = side;
-    this.createButton();
+    this.createButton(rootObject, options);
   }
-  public createButton() {
+
+  public createButton(
+    rootObject: JQuery<HTMLElement>,
+    options: IOptions
+  ): void {
     this.element = $('<button class="sliderButton"></button>');
-    this.view.progressBar.element.append(this.element);
-    this.render();
+    rootObject.append(this.element);
+    this.render(options);
   }
-  public render() {
-    const { vertical } = this.view.options;
+
+  public render(options: IOptions): void {
+    const { vertical } = options;
+    
     if (this.side === "first") {
-      this.element.removeClass(
-        vertical
-          ? "sliderButton__first-horizontal"
-          : "sliderButton__first-vertical"
-      );
-      this.element.addClass(
-        vertical
-          ? "sliderButton__first-vertical"
-          : "sliderButton__first-horizontal"
-      );
+      this.element
+        .removeClass(
+          vertical
+            ? "sliderButton__first-horizontal"
+            : "sliderButton__first-vertical"
+        )
+        .addClass(
+          vertical
+            ? "sliderButton__first-vertical"
+            : "sliderButton__first-horizontal"
+        );
     } else if (this.side === "second") {
-      this.element.removeClass(
-        vertical
-          ? "sliderButton__second-horizontal"
-          : "sliderButton__second-vertical"
-      );
-      this.element.addClass(
-        vertical
-          ? "sliderButton__second-vertical"
-          : "sliderButton__second-horizontal"
-      );
+      this.element
+        .removeClass(
+          vertical
+            ? "sliderButton__second-horizontal"
+            : "sliderButton__second-vertical"
+        )
+        .addClass(
+          vertical
+            ? "sliderButton__second-vertical"
+            : "sliderButton__second-horizontal"
+        );
     }
   }
-  public hideButton(){
-    this.element.addClass("sliderButton_hidden")
+
+  public hideButton() {
+    this.element.hide();
   }
-  public showButton(){
-    this.element.removeClass("sliderButton_hidden");
+
+  public showButton() {
+    this.element.show();
   }
 }
+
 export { SliderButton };

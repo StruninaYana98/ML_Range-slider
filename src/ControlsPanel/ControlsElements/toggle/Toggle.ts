@@ -7,7 +7,6 @@ class Toggle {
 
   findInput(elem:JQuery<HTMLElement>,jqueryClass: string, checked:boolean){
     this.input = elem.find(jqueryClass)
-    console.log(this.input)
     this.input.prop("checked", checked)
   }
  

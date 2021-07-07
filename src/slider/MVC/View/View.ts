@@ -21,6 +21,7 @@ import {
   SECOND_VALUE_CHANGED,
   VIEW_CHANGED,
 } from "../actionTypes";
+
 class View extends EventEmitter {
   private rootObject: JQuery<HTMLElement>;
   public options: IOptions;
@@ -38,16 +39,27 @@ class View extends EventEmitter {
 
   createSlider(options: IOptions) {
     this.options = options;
-    this.slider = new Slider(this);
-    this.rootObject.append(this.slider.element);
-    this.progressBar = new ProgressBar(this);
-    this.firstButton = new SliderButton(this, "first");
+    this.slider = new Slider(this.rootObject, this.options);
+    this.progressBar = new ProgressBar(this.slider.element, this.options);
+    this.firstButton = new SliderButton(
+      this.progressBar.element,
+      this.options,
+      "first"
+    );
     if (!options.range) {
       this.firstButton.hideButton();
     }
-    this.secondButton = new SliderButton(this, "second");
-    this.scale = new Scale(this);
-    this.tips = new Tips(this);
+    this.secondButton = new SliderButton(
+      this.progressBar.element,
+      this.options,
+      "second"
+    );
+    this.scale = new Scale(this.slider.element, this.options);
+    this.tips = new Tips(
+      this.firstButton.element,
+      this.secondButton.element,
+      this.options
+    );
     this.addEventListeners();
   }
 
@@ -56,75 +68,76 @@ class View extends EventEmitter {
 
     switch (event.action) {
       case FIRST_VALUE_CHANGED:
-        this.progressBar.render();
-        this.tips.render();
+        this.progressBar.render(this.options);
+        this.tips.render(this.options);
         break;
 
       case SECOND_VALUE_CHANGED:
-        this.progressBar.render();
-        this.tips.render();
+        this.progressBar.render(this.options);
+        this.tips.render(this.options);
         break;
 
       case MIN_VALUE_CHANGED:
-        this.progressBar.render();
-        this.scale.render();
-        this.tips.render();
+        this.progressBar.render(this.options);
+        this.scale.render(this.options);
+        this.tips.render(this.options);
         break;
 
       case MAX_VALUE_CHANGED:
-        this.progressBar.render();
-        this.scale.render();
-        this.tips.render();
+        this.progressBar.render(this.options);
+        this.scale.render(this.options);
+        this.tips.render(this.options);
         break;
 
       case SCALE_CLICK:
-        this.progressBar.render();
-        this.tips.render();
+        this.progressBar.render(this.options);
+        this.tips.render(this.options);
         break;
 
       case HAS_TIPS_CHANGED:
-        this.tips.render();
+        this.tips.render(this.options);
 
       case RANGE_CHANGED:
-        this.progressBar.render();
+        this.progressBar.render(this.options);
         if (this.options.range) {
           this.firstButton.showButton();
         } else {
           this.firstButton.hideButton();
         }
+        this.tips.render(this.options);
         break;
 
       case HAS_SCALE_CHANGED:
-        this.scale.render();
+        this.scale.render(this.options);
         break;
 
       case VERTICAL_CHANGED:
-        this.slider.render();
-        this.progressBar.render();
-        this.firstButton.render();
-        this.secondButton.render();
-        this.scale.render();
-        this.tips.render();
+        this.slider.render(this.options);
+        this.progressBar.render(this.options);
+        this.firstButton.render(this.options);
+        this.secondButton.render(this.options);
+        this.scale.render(this.options);
+        this.tips.render(this.options);
         break;
 
       case STEP_CHANGED:
-        this.progressBar.render();
-        this.scale.render();
-        this.tips.render();
+        this.progressBar.render(this.options);
+        this.scale.render(this.options);
+        this.tips.render(this.options);
         break;
 
       case MAX_SCALE_NUMBERS_COUNT_CHANGED:
-        this.scale.render();
+        this.scale.render(this.options);
         break;
     }
   }
 
   addEventListeners() {
     this.firstButton.element.on("mousedown", () =>
-      this.progressBar.resizeProgressBar(FIRST_VALUE_CHANGED)
+      this.progressBar.resizeProgressBar(FIRST_VALUE_CHANGED, this.options)
     );
     this.secondButton.element.on("mousedown", () =>
-      this.progressBar.resizeProgressBar(SECOND_VALUE_CHANGED)
+      this.progressBar.resizeProgressBar(SECOND_VALUE_CHANGED, this.options)
     );
     this.progressBar.on(FIRST_VALUE_CHANGED, (value) =>
       this.notifySubscribers({ action: FIRST_VALUE_CHANGED, payload: value })

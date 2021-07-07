@@ -1,23 +1,27 @@
-import { View } from "../View";
+import { IOptions } from "../../Model";
 import { Subview } from "./Subview";
 
 class Slider extends Subview {
-  private view: View;
+  public rootObject: JQuery<HTMLElement>;
   public element: JQuery<HTMLElement>;
 
-  constructor(view: View) {
+  constructor(rootObject: JQuery<HTMLElement>, options: IOptions) {
     super();
-    this.view = view;
-    this.createSlider();
+    this.rootObject = rootObject;
+    this.createSlider(rootObject, options);
   }
 
-  public createSlider() {
+  public createSlider(
+    rootObject: JQuery<HTMLElement>,
+    options: IOptions
+  ): void {
     this.element = $('<div class="slider"></div>');
-    this.render();
+    rootObject.append(this.element);
+    this.render(options);
   }
 
-  public render() {
-    const { vertical } = this.view.options;
+  public render(options: IOptions): void {
+    const { vertical } = options;
     if (vertical) {
       this.element.addClass("slider__vertical");
     } else {
@@ -25,4 +29,5 @@ class Slider extends Subview {
     }
   }
 }
+
 export { Slider };
