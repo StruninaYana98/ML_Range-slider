@@ -17,9 +17,9 @@ import { EventEmitter } from "./EventEmmiter";
 
 interface ISliderEvent {
   action: string;
-  payload: number | boolean | string | object|  IOptions;
+  payload: number | boolean | string | object | IOptions;
 }
-interface IModelEvent{
+interface IModelEvent {
   action: string;
   payload: IOptions;
 }
@@ -349,6 +349,9 @@ class Model extends EventEmitter {
   private getValidStep(step: number, min: number, max: number): number {
     if (typeof step !== "number" || step <= 0) {
       return (max - min) / 10;
+    }
+    if (step > Math.abs(max - min)) {
+      return Math.abs(max - min);
     }
 
     return step;
